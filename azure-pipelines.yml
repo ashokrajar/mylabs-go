@@ -1,0 +1,45 @@
+# Go
+# Build your Go project.
+# Add steps that test, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/go
+
+trigger:
+  - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: GoTool@0
+    displayName: 'Use Go 1.14'
+    inputs:
+      version: '1.14'
+
+  - script: |
+      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
+      golangci-lint run
+    displayName: 'Run Code Quality Checks'
+
+  - task: Go@0
+    displayName: 'Run Unit Tests'
+    inputs:
+      command: 'test'
+      arguments: '-v ./...'
+
+  - task: Go@0
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
+
+  - task: CopyFiles@2
+    displayName: 'Copy binary files to Artifact Stage Directory'
+    inputs:
+      sourceFolder: $(Build.BinariesDirectory)
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Build Artifacts'
+    inputs:
+      artifactName: mylabs-go
