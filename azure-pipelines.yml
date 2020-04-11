@@ -5,9 +5,22 @@
 
 trigger:
   - master
+  - dev
+  - release/*
+  - feature/*
+  - hotfix/*
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-18.04'
+    mac:
+      imageName: 'macos-10.14'
+    windows:
+      imageName: 'vs2017-win2016'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(imageName)
 
 steps:
   - task: GoTool@0
