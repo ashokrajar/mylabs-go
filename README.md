@@ -10,15 +10,18 @@ Which covers these,
 
 * Code Quality Gates
 * Unit Tests
-* Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io))
+* Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io)) [Cooking..]
 * Build Binary
-* Release (WIP)
+* Release [Cooking..]
 
 ### Covered Samples & Examples
 * Azure Pipelines
+  * Multi branch trigger
+  * Multiple platform support with parallel build
 * GitHub Actions
 
-#### Planned Samples
+#### Road Map
 * Travis CI
 * Semaphore
-* More TBD  
+* More TBD
+* Windows Support
