@@ -33,6 +33,12 @@ steps:
       $(go env GOPATH)/bin/golangci-lint run
     displayName: 'Run Code Quality Checks'
 
+  - script: |
+      curl https://cdn.shiftleft.io/download/sl > /usr/local/bin/sl && chmod a+rx /usr/local/bin/sl
+      /usr/local/bin/sl analyze --app MyLabs-G0 --cpg --go ./...
+      sleep 10
+    displayName: 'Run Vulnerability Checks'
+
   - task: Go@0
     displayName: 'Run Unit Tests'
     inputs:

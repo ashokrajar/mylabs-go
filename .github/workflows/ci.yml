@@ -13,7 +13,11 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        operating-system: [ubuntu-latest, macos-latest]
+
+    env:
+      SHIFTLEFT_ORG_ID: "${{ secrets.SHIFT_LEFT_ORG }}"
+      SHIFTLEFT_ACCESS_TOKEN: "${{ secrets.SHIFT_LEFT_TOKEN }}"
 
     steps:
 
@@ -25,6 +29,12 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Run Vulnerability Checks
+        run: |
+          curl https://cdn.shiftleft.io/download/sl > /usr/local/bin/sl && chmod a+rx /usr/local/bin/sl
+          /usr/local/bin/sl analyze --app MyLabs-G0 --cpg --go ./...
+          sleep 10
 
       - name: Run Unit Tests
         run: go test -v ./...

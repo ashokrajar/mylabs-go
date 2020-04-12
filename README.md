@@ -10,7 +10,7 @@ Which covers these,
 
 * Code Quality Gates
 * Unit Tests
-* Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io)) [Cooking..]
+* Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io))
 * Build Binary
 * Release [Cooking..]
 
