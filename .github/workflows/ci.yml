@@ -39,7 +39,7 @@ jobs:
       - name: Run Vulnerability Checks
         run: |
           curl https://cdn.shiftleft.io/download/sl > $GITHUB_WORKSPACE/sl && chmod a+rx $GITHUB_WORKSPACE/sl
-          $GITHUB_WORKSPACE/sl analyze --app MyLabs-G0 --cpg --go ./...
+          $GITHUB_WORKSPACE/sl analyze --wait --tag branch=${GITHUB_REF##*/} --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
           sleep 10
 
       - name: Run Unit Tests

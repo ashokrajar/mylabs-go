@@ -35,7 +35,7 @@ steps:
 
   - script: |
       curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
-      $BUILD_SOURCESDIRECTORY/sl analyze --app MyLabs-G0 --cpg --go ./...
+      $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
       sleep 10
     displayName: 'Run Vulnerability Checks'
     env:
