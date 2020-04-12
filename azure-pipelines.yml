@@ -38,6 +38,9 @@ steps:
       $BUILD_SOURCESDIRECTORY/sl analyze --app MyLabs-G0 --cpg --go ./...
       sleep 10
     displayName: 'Run Vulnerability Checks'
+    env:
+      SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
+      SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
 
   - task: Go@0
     displayName: 'Run Unit Tests'
