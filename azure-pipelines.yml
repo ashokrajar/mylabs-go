@@ -34,8 +34,8 @@ steps:
     displayName: 'Run Code Quality Checks'
 
   - script: |
-      curl https://cdn.shiftleft.io/download/sl > sl && chmod a+rx sl
-      sl analyze --app MyLabs-G0 --cpg --go ./...
+      curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
+      $BUILD_SOURCESDIRECTORY/sl analyze --app MyLabs-G0 --cpg --go ./...
       sleep 10
     displayName: 'Run Vulnerability Checks'
 

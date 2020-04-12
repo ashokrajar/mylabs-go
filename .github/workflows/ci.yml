@@ -38,8 +38,8 @@ jobs:
 
       - name: Run Vulnerability Checks
         run: |
-          curl https://cdn.shiftleft.io/download/sl > sl && chmod a+rx sl
-          sl analyze --app MyLabs-G0 --cpg --go ./...
+          curl https://cdn.shiftleft.io/download/sl > $GITHUB_WORKSPACE/sl && chmod a+rx $GITHUB_WORKSPACE/sl
+          $GITHUB_WORKSPACE/sl analyze --app MyLabs-G0 --cpg --go ./...
           sleep 10
 
       - name: Run Unit Tests
