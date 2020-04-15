@@ -1,0 +1,15 @@
+build_rules:
+  - id: build-rule-identifier
+    severity:
+      - SEVERITY_MEDIUM_IMPACT
+      - SEVERITY_HIGH_IMPACT
+    type:
+      - SQL Injection
+      - Sensitive Data Leak
+    owasp_category:
+      - a1-injection
+    threshold: 10
+  - id: another-build-rule
+    severity:
+      - SEVERITY_LOW_IMPACT
+    threshold: 100

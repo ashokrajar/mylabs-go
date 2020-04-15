@@ -65,3 +65,10 @@ steps:
     displayName: 'Publish Build Artifacts'
     inputs:
       artifactName: mylabs-go
+
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        ./mylabs-go version
+      workingDirectory: $(Build.BinariesDirectory)
