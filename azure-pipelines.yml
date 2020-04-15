@@ -67,8 +67,20 @@ steps:
       artifactName: mylabs-go
 
   - task: Bash@3
+    displayName: GetVersion
     inputs:
       targetType: 'inline'
       script: |
-        ./mylabs-go version
+        version=`./mylabs-go version`
+        echo "##vso[task.setvariable variable=ADLSCLI_VERSION;]$version"
       workingDirectory: $(Build.BinariesDirectory)
+
+  - task: UniversalPackages@0
+    inputs:
+      command: 'publish'
+      publishDirectory: '$(Build.ArtifactStagingDirectory)'
+      feedsToUsePublish: 'internal'
+      vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
+      vstsFeedPackagePublish: 'mylabs-go-cli'
+      versionOption: 'custom'
+      versionPublish: $ADLSCLI_VERSION
