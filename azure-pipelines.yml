@@ -75,6 +75,13 @@ steps:
         echo "##vso[task.setvariable variable=ADLSCLI_VERSION;]$version"
       workingDirectory: $(Build.BinariesDirectory)
 
+  - task: Bash@3
+    displayName: PrintVersion
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "$(ADLSCLI_VERSION)"
+
   - task: UniversalPackages@0
     inputs:
       command: 'publish'
@@ -83,4 +90,4 @@ steps:
       vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
       vstsFeedPackagePublish: 'mylabs-go-cli'
       versionOption: 'custom'
-      versionPublish: '$ADLSCLI_VERSION'
+      versionPublish: '$(ADLSCLI_VERSION)'
