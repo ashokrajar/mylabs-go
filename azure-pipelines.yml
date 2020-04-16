@@ -64,23 +64,9 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Build Artifacts'
     inputs:
-      artifactName: mylabs-go
-
-  - task: Bash@3
-    displayName: GetVersion
-    inputs:
-      targetType: 'inline'
-      script: |
-        version=`./mylabs-go version`
-        echo "##vso[task.setvariable variable=ADLSCLI_VERSION;]$version"
-      workingDirectory: $(Build.BinariesDirectory)
-
-  - task: Bash@3
-    displayName: PrintVersion
-    inputs:
-      targetType: 'inline'
-      script: |
-        echo "$(ADLSCLI_VERSION)"
+      artifactName: '$AGENT_OS'
+    env:
+      AGENT_OS: $(Agent.OS)
 
   - task: UniversalPackages@0
     inputs:
