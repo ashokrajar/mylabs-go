@@ -24,6 +24,10 @@ install:
 after_install:
   - sl auth --org $SHIFTLEFT_ORG_ID --token $SHIFTLEFT_ACCESS_TOKEN
 
+stages:
+  - test
+  - Build
+
 jobs:
   include:
     - stage: test
@@ -36,5 +40,6 @@ jobs:
         - sl analyze --wait --tag branch=$TRAVIS_BRANCH --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
       name: Vulnerabilty Analysis
 
-script:
-  - go build -o mylabs-go
+    - stage: Build
+      script:
+        - go build -o mylabs-go
