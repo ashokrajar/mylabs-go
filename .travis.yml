@@ -26,7 +26,7 @@ after_install:
 
 jobs:
   include:
-    - stage: Tests
+    - stage: test
       name: Code Quality Tests
       script:
         - golangci-lint run
@@ -37,4 +37,4 @@ jobs:
       name: Vulnerabilty Analysis
 
 script:
-  - gp build -o mylabs-go
+  - go build -o mylabs-go
