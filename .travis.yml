@@ -1,0 +1,40 @@
+language: go
+
+branches:
+  only:
+    - master
+    - dev
+    - release/*
+
+os:
+  - linux
+  - osx
+
+go:
+  - "1.13"
+  - "1.14"
+
+env:
+  - GO111MODULE=on
+
+install:
+  - curl https://cdn.shiftleft.io/download/sl > /usr/local/bin/sl && chmod a+rx /usr/local/bin/sl
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.24.0
+
+after_install:
+  - sl auth --org "SHIFTLEFT_ORG_ID" --token "SHIFTLEFT_ACCESS_TOKEN"
+
+jobs:
+  include:
+    - stage: Tests
+      name: Code Quality Tests
+      script:
+        - golangci-lint run
+    - script: go test -v ./...
+      name: Unit Tests
+    - after_script:
+        - sl analyze --wait --tag branch=$TRAVIS_BRANCH --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+      name: Vulnerabilty Analysis
+
+    - stage: Build
+      script: go build -o mylabs-go
