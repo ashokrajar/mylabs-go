@@ -24,9 +24,17 @@ install:
 after_install:
   - sl auth --org $SHIFTLEFT_ORG_ID --token $SHIFTLEFT_ACCESS_TOKEN
 
-script:
-  - golangci-lint run
-  - go test -v ./...
-  - sl analyze --wait --tag branch=$TRAVIS_BRANCH --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+jobs:
+  include:
+    - stage: Tests
+      name: Code Quality Tests
+      script:
+        - golangci-lint run
+    - script: go test -v ./...
+      name: Unit Tests
+    - after_script:
+        - sl analyze --wait --tag branch=$TRAVIS_BRANCH --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+      name: Vulnerabilty Analysis
 
-gobuild_args: -o mylabs-go
+script:
+  - gp build -o mylabs-go
