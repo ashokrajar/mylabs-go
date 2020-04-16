@@ -65,8 +65,6 @@ steps:
     displayName: 'Publish Build Artifacts'
     inputs:
       artifactName: $(Agent.OS)
-    env:
-      AGENT_OS: $(Agent.OS)
 
   - task: Bash@3
     displayName: GetVersion
@@ -86,4 +84,4 @@ steps:
       vstsFeedPackagePublish: 'mylabs-go-cli'
       versionOption: 'custom'
       versionPublish: $(ADLSCLI_VERSION)
-#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
