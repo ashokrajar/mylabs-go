@@ -68,6 +68,15 @@ steps:
     env:
       AGENT_OS: $(Agent.OS)
 
+  - task: Bash@3
+    displayName: GetVersion
+    inputs:
+      targetType: 'inline'
+      script: |
+        version=`./mylabs-go version`
+        echo "##vso[task.setvariable variable=ADLSCLI_VERSION;]$version"
+      workingDirectory: $(Build.BinariesDirectory)
+
   - task: UniversalPackages@0
     inputs:
       command: 'publish'
@@ -76,5 +85,5 @@ steps:
       vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
       vstsFeedPackagePublish: 'mylabs-go-cli'
       versionOption: 'custom'
-      versionPublish: '0.1.0'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      versionPublish: $(ADLSCLI_VERSION)
+#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
