@@ -8,6 +8,8 @@ on:
       - release/*
       - feature/*
       - hotfix/*
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches:
       - master
@@ -39,11 +41,19 @@ jobs:
       - name: Run Vulnerability Checks
         run: |
           curl https://cdn.shiftleft.io/download/sl > $GITHUB_WORKSPACE/sl && chmod a+rx $GITHUB_WORKSPACE/sl
-          $GITHUB_WORKSPACE/sl analyze --app MyLabs-G0 --cpg --go ./...
+          $GITHUB_WORKSPACE/sl analyze --wait --tag branch=${GITHUB_REF##*/} --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
           sleep 10
 
       - name: Run Unit Tests
         run: go test -v ./...
 
+      - name: Create bin dir
+        run: mkdir -p bin
+
       - name: Build
-        run: go build -v .
+        run: go build -o bin/mylabs-go-cli -v .
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: mylabs-go-cli
+          path: bin
