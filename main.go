@@ -26,7 +26,7 @@ import (
 	"os"
 )
 
-var version = "0.1.0"
+var version = "0.2.0"
 
 // Version will return version string
 func Version() string {
