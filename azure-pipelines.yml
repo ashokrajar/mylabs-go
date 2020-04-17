@@ -80,7 +80,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        OS_NAME=`echo "$(AGENT_OS)" | tr "[:upper:]" "[:lower:]"`
+        OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
         echo "##vso[task.setvariable variable=PKG_NAME;]$OS_NAME"
       workingDirectory: $(Build.BinariesDirectory)
 
