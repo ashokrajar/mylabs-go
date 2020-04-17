@@ -46,14 +46,11 @@ steps:
       go get -u github.com/jstemmer/go-junit-report
       go get github.com/axw/gocov/gocov
       go get github.com/AlekSi/gocov-xml
-      go get github.com/matm/gocov-html
 
-      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | go-junit-report > report.xml
+      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | $(go env GOPATH)/bin/go-junit-report > report.xml
 
-      mkdir coverage
       $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
       $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
-      $(go env GOPATH)/bin/gocov-html < coverage.json > coverage/index.html
     displayName: 'Run Unit Tests'
 
   - task: PublishTestResults@2
@@ -67,7 +64,6 @@ steps:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
-      reportDirectory: $(System.DefaultWorkingDirectory)/**/coverage
 
   - task: Go@0
     displayName: 'Build Application Binary'
