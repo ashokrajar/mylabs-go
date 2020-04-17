@@ -42,11 +42,32 @@ steps:
       SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
       SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
 
-  - task: Go@0
+  - script: |
+      go get -u github.com/jstemmer/go-junit-report
+      go get github.com/axw/gocov/gocov
+      go get github.com/AlekSi/gocov-xml
+      go get -u gopkg.in/matm/v1/gocov-html
+
+      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | go-junit-report > report.xml
+
+      gocov convert coverage.txt > coverage.json
+      gocov-xml < coverage.json > coverage.xml
+      mkdir coverage
+      gocov-html < coverage.json > coverage/index.html
     displayName: 'Run Unit Tests'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
     inputs:
-      command: 'test'
-      arguments: '-v ./...'
+      testRunner: JUnit
+      testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
+      reportDirectory: $(System.DefaultWorkingDirectory)/**/coverage
 
   - task: Go@0
     displayName: 'Build'
@@ -74,6 +95,7 @@ steps:
         version=`./mylabs-go version`
         echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
       workingDirectory: $(Build.BinariesDirectory)
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: Bash@3
     displayName: 'Get/Set OS Specific Package Name'
@@ -83,8 +105,10 @@ steps:
         OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
         echo "##vso[task.setvariable variable=PKG_NAME;]mylabs-go-cli-$OS_NAME"
       workingDirectory: $(Build.BinariesDirectory)
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: UniversalPackages@0
+    displayName: 'Publish Release Artifacts'
     inputs:
       command: 'publish'
       publishDirectory: '$(Build.ArtifactStagingDirectory)'
@@ -93,4 +117,4 @@ steps:
       vstsFeedPackagePublish: $(PKG_NAME)
       versionOption: 'custom'
       versionPublish: $(MYLABSCLI_VERSION)
-#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
