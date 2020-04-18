@@ -42,14 +42,31 @@ steps:
       SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
       SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
 
-  - task: Go@0
-    displayName: 'Run Unit Tests'
+  - script: |
+      go get -u github.com/jstemmer/go-junit-report
+      go get github.com/axw/gocov/gocov
+      go get github.com/AlekSi/gocov-xml
+
+      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | $(go env GOPATH)/bin/go-junit-report > report.xml
+
+      $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
+      $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
+    displayName: 'Run Unit Tests & Coverage'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
     inputs:
-      command: 'test'
-      arguments: '-v ./...'
+      testRunner: JUnit
+      testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
 
   - task: Go@0
-    displayName: 'Build'
+    displayName: 'Build Application Binary'
     inputs:
       command: 'build'
       workingDirectory: '$(System.DefaultWorkingDirectory)'
@@ -67,21 +84,33 @@ steps:
       artifactName: $(Agent.OS)
 
   - task: Bash@3
-    displayName: GetVersion
+    displayName: 'Get/Set Application/Package Version'
     inputs:
       targetType: 'inline'
       script: |
         version=`./mylabs-go version`
         echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
       workingDirectory: $(Build.BinariesDirectory)
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  - task: Bash@3
+    displayName: 'Get/Set OS Specific Package Name'
+    inputs:
+      targetType: 'inline'
+      script: |
+        OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
+        echo "##vso[task.setvariable variable=PKG_NAME;]mylabs-go-cli-$OS_NAME"
+      workingDirectory: $(Build.BinariesDirectory)
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: UniversalPackages@0
+    displayName: 'Publish Release Artifacts'
     inputs:
       command: 'publish'
       publishDirectory: '$(Build.ArtifactStagingDirectory)'
       feedsToUsePublish: 'internal'
       vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
-      vstsFeedPackagePublish: 'mylabs-go-cli'
+      vstsFeedPackagePublish: $(PKG_NAME)
       versionOption: 'custom'
       versionPublish: $(MYLABSCLI_VERSION)
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
