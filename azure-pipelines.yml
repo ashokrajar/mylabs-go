@@ -51,7 +51,7 @@ steps:
 
       $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
       $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
-    displayName: 'Run Unit Tests'
+    displayName: 'Run Unit Tests & Coverage'
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results'
