@@ -4,11 +4,20 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/go
 
 trigger:
-  - master
-  - dev
-  - release/*
-  - feature/*
-  - hotfix/*
+  batch: true
+  branches:
+    include:
+      - master
+      - dev
+      - release/*
+      - feature/*
+      - hotfix/*
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+      - master
 
 strategy:
   matrix:
@@ -52,6 +61,22 @@ steps:
       $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
       $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
     displayName: 'Run Unit Tests & Coverage'
+
+  - script: |
+      docker run \
+      -v "$(Build.SourcesDirectory):/app:cached" \
+      -v "$(Build.ArtifactStagingDirectory):/reports:cached" \
+      shiftleft/sast-scan scan --src /app \
+      --out_dir /reports/CodeAnalysisLogs
+    displayName: "Perform ShiftLeft Scan"
+    continueOnError: "true"
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish analysis logs"
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs"
+      ArtifactName: "CodeAnalysisLogs"
+      publishLocation: "Container"
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results'
