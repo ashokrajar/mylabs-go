@@ -41,8 +41,11 @@ jobs:
       - name: Run Vulnerability Checks
         run: |
           curl https://cdn.shiftleft.io/download/sl > $GITHUB_WORKSPACE/sl && chmod a+rx $GITHUB_WORKSPACE/sl
+
+          echo "Sleeping for 60 seconds to avoid concurent reqeust to ShiftLeft as they are rate limited."
+          sleep 60
+
           $GITHUB_WORKSPACE/sl analyze --wait --tag branch=${GITHUB_REF##*/} --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
-          sleep 10
 
       - name: Run Unit Tests
         run: go test -v ./...

@@ -45,7 +45,6 @@ steps:
   - script: |
       curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
       $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
-      sleep 10
     displayName: 'Run Vulnerability Checks'
     env:
       SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
@@ -56,10 +55,15 @@ steps:
       go get github.com/axw/gocov/gocov
       go get github.com/AlekSi/gocov-xml
 
-      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | $(go env GOPATH)/bin/go-junit-report > report.xml
+      go test -v -coverprofile=coverage.txt -covermode count ./... > test_results.txt
+      EXIT_STATUS=$?
+
+      $(go env GOPATH)/bin/go-junit-report < test_results.txt > report.xml
 
       $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
       $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
+
+      if test $EXIT_STATUS -ne 0; then exit 1; fi
     displayName: 'Run Unit Tests & Coverage'
 
   - script: |
