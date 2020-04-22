@@ -35,7 +35,7 @@ func Version() string {
 
 // HelloHome will return hello home string
 func HelloHome() string {
-	return "Hello Homee !!"
+	return "Hello Home !!"
 }
 
 // The mylabs-go command
