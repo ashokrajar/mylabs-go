@@ -63,16 +63,16 @@ stages:
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:
-          name: 'Linux Build'
+          name: 'Linux_Release'
           pool:
             vmImage: 'ubuntu-18.04'
       - template: templates/azure/jobs/release.yml
         parameters:
-          name: 'Mac Build'
+          name: 'Mac_Release'
           pool:
             vmImage: 'macos-10.14'
       - template: templates/azure/jobs/release.yml
         parameters:
-          name: 'Windows Build'
+          name: 'Windows_Release'
           pool:
             vmImage: 'vs2017-win2016'
