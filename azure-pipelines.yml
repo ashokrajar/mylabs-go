@@ -41,17 +41,17 @@ stages:
     jobs:
       - template: templates/azure/jobs/build.yml
         parameters:
-          name: 'Linux Build'
+          name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-18.04'
       - template: templates/azure/jobs/build.yml
         parameters:
-          name: 'Mac Build'
+          name: 'Mac_Build'
           pool:
             vmImage: 'macos-10.14'
       - template: templates/azure/jobs/build.yml
         parameters:
-          name: 'Windows Build'
+          name: 'Windows_Build'
           pool:
             vmImage: 'vs2017-win2016'
 
