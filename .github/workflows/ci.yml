@@ -10,9 +10,23 @@ on:
       - hotfix/*
     tags:
       - 'v*.*.*'
+    paths-ignore:
+      - README.md
+        - LICENSE
+        - .travis.yml
+        - .azure-pipeline.yml
+        - templates/azure/*
+
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - README.md
+        - LICENSE
+        - .travis.yml
+        - .azure-pipeline.yml
+        - templates/azure/*
+
 
 jobs:
 
