@@ -12,134 +12,67 @@ trigger:
       - release/*
       - feature/*
       - hotfix/*
+  paths:
+    exclude:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .github/*
+      - .gitignore
 
 pr:
   autoCancel: false
   branches:
     include:
       - master
+  paths:
+    exclude:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .github/*
+      - .gitignore
 
-strategy:
-  matrix:
-    linux:
-      imageName: 'ubuntu-18.04'
-    mac:
-      imageName: 'macos-10.14'
-#    windows:
-#      imageName: 'vs2017-win2016'
+variables:
+  GOPATH: '$(system.defaultWorkingDirectory)/gowork'
 
-pool:
-  vmImage: $(imageName)
+stages:
+  - stage: Build
+    jobs:
+      - template: templates/azure/jobs/build.yaml
+        parameters:
+          name: 'Linux Build'
+          pool:
+            vmImage: 'ubuntu-18.04'
+      - template: templates/azure/jobs/build.yaml
+        parameters:
+          name: 'Mac Build'
+          pool:
+            vmImage: 'macos-10.14'
+      - template: templates/azure/jobs/build.yaml
+        parameters:
+          name: 'Windows Build'
+          pool:
+            vmImage: 'vs2017-win2016'
 
-steps:
-  - task: GoTool@0
-    displayName: 'Use Go 1.14'
-    inputs:
-      version: '1.14'
+  - stage: Test
+    jobs:
+      - template: templates/azure/jobs/test.yaml
 
-  - script: |
-      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
-      $(go env GOPATH)/bin/golangci-lint run
-    displayName: 'Run Code Quality Checks'
-
-  - script: |
-      curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
-      $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
-    displayName: 'Run Vulnerability Checks'
-    env:
-      SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
-      SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
-
-  - script: |
-      go get -u github.com/jstemmer/go-junit-report
-      go get github.com/axw/gocov/gocov
-      go get github.com/AlekSi/gocov-xml
-
-      go test -v -coverprofile=coverage.txt -covermode count ./... > test_results.txt
-      EXIT_STATUS=$?
-
-      $(go env GOPATH)/bin/go-junit-report < test_results.txt > report.xml
-
-      $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
-      $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
-
-      if test $EXIT_STATUS -ne 0; then exit 1; fi
-    displayName: 'Run Unit Tests & Coverage'
-
-  - script: |
-      docker run \
-      -v "$(Build.SourcesDirectory):/app:cached" \
-      -v "$(Build.ArtifactStagingDirectory):/reports:cached" \
-      shiftleft/sast-scan scan --src /app \
-      --out_dir /reports/CodeAnalysisLogs
-    displayName: "Perform ShiftLeft Scan"
-    continueOnError: "true"
-
-  - task: PublishBuildArtifacts@1
-    displayName: "Publish analysis logs"
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs"
-      ArtifactName: "CodeAnalysisLogs"
-      publishLocation: "Container"
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testRunner: JUnit
-      testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage'
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
-
-  - task: Go@0
-    displayName: 'Build Application Binary'
-    inputs:
-      command: 'build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
-      arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
-
-  - task: CopyFiles@2
-    displayName: 'Copy binary files to Artifact Stage Directory'
-    inputs:
-      sourceFolder: $(Build.BinariesDirectory)
-      targetFolder: $(Build.ArtifactStagingDirectory)
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Build Artifacts'
-    inputs:
-      artifactName: $(Agent.OS)
-
-  - task: Bash@3
-    displayName: 'Get/Set Application/Package Version'
-    inputs:
-      targetType: 'inline'
-      script: |
-        version=`./mylabs-go version`
-        echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
-      workingDirectory: $(Build.BinariesDirectory)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: Bash@3
-    displayName: 'Get/Set OS Specific Package Name'
-    inputs:
-      targetType: 'inline'
-      script: |
-        OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
-        echo "##vso[task.setvariable variable=PKG_NAME;]mylabs-go-cli-$OS_NAME"
-      workingDirectory: $(Build.BinariesDirectory)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: UniversalPackages@0
-    displayName: 'Publish Release Artifacts'
-    inputs:
-      command: 'publish'
-      publishDirectory: '$(Build.ArtifactStagingDirectory)'
-      feedsToUsePublish: 'internal'
-      vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
-      vstsFeedPackagePublish: $(PKG_NAME)
-      versionOption: 'custom'
-      versionPublish: $(MYLABSCLI_VERSION)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  - stage: Release
+    jobs:
+      - template: templates/azure/jobs/release.yaml
+        parameters:
+          name: 'Linux Build'
+          pool:
+            vmImage: 'ubuntu-18.04'
+      - template: templates/azure/jobs/release.yaml
+        parameters:
+          name: 'Mac Build'
+          pool:
+            vmImage: 'macos-10.14'
+      - template: templates/azure/jobs/release.yaml
+        parameters:
+          name: 'Windows Build'
+          pool:
+            vmImage: 'vs2017-win2016'
