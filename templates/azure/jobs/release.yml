@@ -5,7 +5,7 @@ parameters:
 jobs:
   - job: ${{ parameters.name }}
     pool: ${{ parameters.pool }}
-    Steps:
+    steps:
       - task: GoTool@0
         displayName: 'Use Go 1.14'
         inputs:
