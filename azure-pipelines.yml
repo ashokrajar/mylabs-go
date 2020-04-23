@@ -39,17 +39,17 @@ variables:
 stages:
   - stage: Build
     jobs:
-      - template: templates/azure/jobs/build.yaml
+      - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Linux Build'
           pool:
             vmImage: 'ubuntu-18.04'
-      - template: templates/azure/jobs/build.yaml
+      - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Mac Build'
           pool:
             vmImage: 'macos-10.14'
-      - template: templates/azure/jobs/build.yaml
+      - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Windows Build'
           pool:
@@ -57,21 +57,21 @@ stages:
 
   - stage: Test
     jobs:
-      - template: templates/azure/jobs/test.yaml
+      - template: templates/azure/jobs/test.yml
 
   - stage: Release
     jobs:
-      - template: templates/azure/jobs/release.yaml
+      - template: templates/azure/jobs/release.yml
         parameters:
           name: 'Linux Build'
           pool:
             vmImage: 'ubuntu-18.04'
-      - template: templates/azure/jobs/release.yaml
+      - template: templates/azure/jobs/release.yml
         parameters:
           name: 'Mac Build'
           pool:
             vmImage: 'macos-10.14'
-      - template: templates/azure/jobs/release.yaml
+      - template: templates/azure/jobs/release.yml
         parameters:
           name: 'Windows Build'
           pool:
