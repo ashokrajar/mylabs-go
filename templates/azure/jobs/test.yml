@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - template: ../steps/setupgo.yml
+        parameters:
+          goVersion: '$(go.version)'
 
       - script: |
           set -e -x

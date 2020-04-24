@@ -1,8 +1,11 @@
+parameters:
+  goVersion: '1.14'
+
 steps:
   - task: GoTool@0
     displayName: 'Use Go ${{ parameters.goVersion }}'
     inputs:
-      version: '$(go.version)'
+      version: ${{ parameters.goVersion }}
 
   - script: |
       set -e -x
