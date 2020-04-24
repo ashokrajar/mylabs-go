@@ -11,20 +11,10 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
-      - task: GoTool@0
-        inputs:
-          version: '$(go.version)'
-        displayName: 'Use Go ${{ parameters.goVersion }}'
+      - template: ../steps/setupgo.yml
 
       - script: |
-          set -e
-          mkdir -p '$(GOPATH)/bin'
-          echo '##vso[task.prependpath]$(GOROOT)/bin'
-          echo '##vso[task.prependpath]$(GOPATH)/bin'
-        displayName: 'Create Go Workspace'
-
-      - script: |
-          set -e
+          set -e -x
           go version
           go get -u github.com/jstemmer/go-junit-report
           go get github.com/axw/gocov/gocov
@@ -36,12 +26,12 @@ jobs:
         displayName: 'Install Dependencies'
 
       - script: |
-          set -e
+          set -e -x
           golangci-lint run
         displayName: 'Run Code Quality Checks'
 
       - script: |
-          set -e
+          set -e -x
           go test -v -coverprofile=coverage.txt -covermode count ./... > test_results.txt
           go-junit-report < test_results.txt > report.xml
         displayName: 'Run Unit Tests'
@@ -53,7 +43,7 @@ jobs:
           testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
 
       - script: |
-          set -e
+          set -e -x
           gocov convert coverage.txt > coverage.json
           gocov-xml < coverage.json > coverage.xml
         displayName: 'Run Code Coverage Tests'
@@ -65,7 +55,7 @@ jobs:
           summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
 
       - script: |
-          set -e
+          set -e -x
           sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
         displayName: 'Run Vulnerability Checks'
         env:
@@ -73,7 +63,7 @@ jobs:
           SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
 
       - script: |
-          set -e
+          set -e -x
           docker run \
           -v "$(Build.SourcesDirectory):/app:cached" \
           -v "$(Build.ArtifactStagingDirectory):/reports:cached" \

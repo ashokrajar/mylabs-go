@@ -6,14 +6,6 @@ jobs:
   - job: ${{ parameters.name }}
     pool: ${{ parameters.pool }}
     steps:
-      - task: GoTool@0
-        displayName: 'Use Go 1.14'
-        inputs:
-          version: '1.14'
+      - template: ../steps/setupgo.yml
 
-      - task: Go@0
-        displayName: 'Build Application Binary'
-        inputs:
-          command: 'build'
-          workingDirectory: '$(System.DefaultWorkingDirectory)'
-          arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
+      - template: ../steps/buildapp.yml
