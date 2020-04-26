@@ -34,7 +34,7 @@ pr:
       - .gitignore
 
 variables:
-  GOPATH: '$(system.defaultWorkingDirectory)/gowork'
+  GOPATH: '$(Pipeline.Workspace)/gowork'
 
 stages:
   - stage: Build
