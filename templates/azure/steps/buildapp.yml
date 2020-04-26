@@ -1,0 +1,7 @@
+steps:
+  - task: Go@0
+    displayName: 'Build Application Binary'
+    inputs:
+      command: 'build'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
