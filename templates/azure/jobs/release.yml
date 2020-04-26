@@ -32,12 +32,12 @@ jobs:
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
       - task: Bash@3
-        displayName: 'Get/Set OS Specific Package Name'
+        displayName: 'Get/Set OS Specific Package Feed Name'
         inputs:
           targetType: 'inline'
           script: |
             OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
-            echo "##vso[task.setvariable variable=PKG_NAME;]mylabs-go-cli-$OS_NAME"
+            echo "##vso[task.setvariable variable=FEED_NAME;]$OS_NAME"
           workingDirectory: $(Build.BinariesDirectory)
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
@@ -48,7 +48,7 @@ jobs:
           publishDirectory: '$(Build.ArtifactStagingDirectory)'
           feedsToUsePublish: 'internal'
           vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
-          vstsFeedPackagePublish: $(PKG_NAME)
+          vstsFeedPackagePublish: $(FEED_NAME)
           versionOption: 'custom'
           versionPublish: $(MYLABSCLI_VERSION)
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
