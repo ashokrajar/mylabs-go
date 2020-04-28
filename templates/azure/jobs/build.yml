@@ -1,0 +1,11 @@
+parameters:
+  name: ''
+  pool: ''
+
+jobs:
+  - job: ${{ parameters.name }}
+    pool: ${{ parameters.pool }}
+    steps:
+      - template: ../steps/setupgo.yml
+
+      - template: ../steps/buildapp.yml

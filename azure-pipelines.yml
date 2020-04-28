@@ -4,113 +4,77 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/go
 
 trigger:
-  - master
-  - dev
-  - release/*
-  - feature/*
-  - hotfix/*
+  batch: true
+  branches:
+    include:
+      - master
+      - dev
+      - release/*
+      - feature/*
+      - hotfix/*
+  paths:
+    exclude:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .github/*
+      - .gitignore
 
-strategy:
-  matrix:
-    linux:
-      imageName: 'ubuntu-18.04'
-    mac:
-      imageName: 'macos-10.14'
-#    windows:
-#      imageName: 'vs2017-win2016'
+pr:
+  autoCancel: false
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .github/*
+      - .gitignore
 
-pool:
-  vmImage: $(imageName)
+variables:
+  GOPATH: '$(Pipeline.Workspace)/gowork'
 
-steps:
-  - task: GoTool@0
-    displayName: 'Use Go 1.14'
-    inputs:
-      version: '1.14'
+stages:
+  - stage: Build
+    jobs:
+      - template: templates/azure/jobs/build.yml
+        parameters:
+          name: 'Linux_Build'
+          pool:
+            vmImage: 'ubuntu-18.04'
+      - template: templates/azure/jobs/build.yml
+        parameters:
+          name: 'Mac_Build'
+          pool:
+            vmImage: 'macos-10.14'
+  # TODO: More work needed to enable windows support
+#      - template: templates/azure/jobs/build.yml
+#        parameters:
+#          name: 'Windows_Build'
+#          pool:
+#            vmImage: 'vs2017-win2016'
 
-  - script: |
-      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
-      $(go env GOPATH)/bin/golangci-lint run
-    displayName: 'Run Code Quality Checks'
+  - stage: Test
+    jobs:
+      - template: templates/azure/jobs/test.yml
 
-  - script: |
-      curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
-      $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
-      sleep 10
-    displayName: 'Run Vulnerability Checks'
-    env:
-      SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
-      SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
-
-  - script: |
-      go get -u github.com/jstemmer/go-junit-report
-      go get github.com/axw/gocov/gocov
-      go get github.com/AlekSi/gocov-xml
-
-      go test -v -coverprofile=coverage.txt -covermode count ./... 2>&1 | $(go env GOPATH)/bin/go-junit-report > report.xml
-
-      $(go env GOPATH)/bin/gocov convert coverage.txt > coverage.json
-      $(go env GOPATH)/bin/gocov-xml < coverage.json > coverage.xml
-    displayName: 'Run Unit Tests & Coverage'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testRunner: JUnit
-      testResultsFiles: $(System.DefaultWorkingDirectory)/**/report.xml
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage'
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
-
-  - task: Go@0
-    displayName: 'Build Application Binary'
-    inputs:
-      command: 'build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
-      arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
-
-  - task: CopyFiles@2
-    displayName: 'Copy binary files to Artifact Stage Directory'
-    inputs:
-      sourceFolder: $(Build.BinariesDirectory)
-      targetFolder: $(Build.ArtifactStagingDirectory)
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Build Artifacts'
-    inputs:
-      artifactName: $(Agent.OS)
-
-  - task: Bash@3
-    displayName: 'Get/Set Application/Package Version'
-    inputs:
-      targetType: 'inline'
-      script: |
-        version=`./mylabs-go version`
-        echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
-      workingDirectory: $(Build.BinariesDirectory)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: Bash@3
-    displayName: 'Get/Set OS Specific Package Name'
-    inputs:
-      targetType: 'inline'
-      script: |
-        OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
-        echo "##vso[task.setvariable variable=PKG_NAME;]mylabs-go-cli-$OS_NAME"
-      workingDirectory: $(Build.BinariesDirectory)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: UniversalPackages@0
-    displayName: 'Publish Release Artifacts'
-    inputs:
-      command: 'publish'
-      publishDirectory: '$(Build.ArtifactStagingDirectory)'
-      feedsToUsePublish: 'internal'
-      vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
-      vstsFeedPackagePublish: $(PKG_NAME)
-      versionOption: 'custom'
-      versionPublish: $(MYLABSCLI_VERSION)
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  - stage: Release
+    jobs:
+      - template: templates/azure/jobs/release.yml
+        parameters:
+          name: 'Linux_Release'
+          pool:
+            vmImage: 'ubuntu-18.04'
+      - template: templates/azure/jobs/release.yml
+        parameters:
+          name: 'Mac_Release'
+          pool:
+            vmImage: 'macos-10.14'
+# TODO: More work needed to enable windows support
+#      - template: templates/azure/jobs/release.yml
+#        parameters:
+#          name: 'Windows_Release'
+#          pool:
+#            vmImage: 'vs2017-win2016'

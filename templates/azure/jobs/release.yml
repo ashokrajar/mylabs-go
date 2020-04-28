@@ -1,0 +1,56 @@
+parameters:
+  name: ''
+  pool: ''
+
+jobs:
+  - job: ${{ parameters.name }}
+    pool: ${{ parameters.pool }}
+    steps:
+      - template: ../steps/setupgo.yml
+
+      - template: ../steps/buildapp.yml
+
+      - task: CopyFiles@2
+        displayName: 'Copy binary files to Artifact Stage Directory'
+        inputs:
+          sourceFolder: $(Build.BinariesDirectory)
+          targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Build Artifacts'
+        inputs:
+          artifactName: $(Agent.OS)
+
+      - task: Bash@3
+        displayName: 'Get/Set Application/Package Version'
+        inputs:
+          targetType: 'inline'
+          script: |
+            set -e -x
+            version=`./mylabs-go version`
+            echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
+          workingDirectory: $(Build.BinariesDirectory)
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+      - task: Bash@3
+        displayName: 'Get/Set OS Specific Package Feed Name'
+        inputs:
+          targetType: 'inline'
+          script: |
+            set -e -x
+            OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
+            echo "##vso[task.setvariable variable=FEED_NAME;]$OS_NAME"
+          workingDirectory: $(Build.BinariesDirectory)
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+      - task: UniversalPackages@0
+        displayName: 'Publish Release Artifacts'
+        inputs:
+          command: 'publish'
+          publishDirectory: '$(Build.ArtifactStagingDirectory)'
+          feedsToUsePublish: 'internal'
+          vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
+          vstsFeedPackagePublish: $(FEED_NAME)
+          versionOption: 'custom'
+          versionPublish: $(MYLABSCLI_VERSION)
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
