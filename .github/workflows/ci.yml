@@ -54,6 +54,7 @@ jobs:
 
       - name: Run Vulnerability Checks
         run: |
+          set -e -x
           curl https://cdn.shiftleft.io/download/sl > $GITHUB_WORKSPACE/sl && chmod a+rx $GITHUB_WORKSPACE/sl
 
           echo "Sleeping for 60 seconds to avoid concurent reqeust to ShiftLeft as they are rate limited."

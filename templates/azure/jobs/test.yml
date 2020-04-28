@@ -21,10 +21,6 @@ jobs:
           go get -u github.com/jstemmer/go-junit-report
           go get github.com/axw/gocov/gocov
           go get github.com/AlekSi/gocov-xml
-
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
-
-          curl https://cdn.shiftleft.io/download/sl > $(go env GOPATH)/bin/sl && chmod a+rx $(go env GOPATH)/bin/sl
         displayName: 'Install Dependencies'
 
       - script: |
