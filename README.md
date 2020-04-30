@@ -1,4 +1,4 @@
-# mylabs-go ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ashokrajar/mylabs-go?color=success) ![GitHub](https://img.shields.io/github/license/ashokrajar/mylabs-go?color=blue)
+# mylabs-go ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ashokrajar/mylabs-go?color=success) ![GitHub](https://img.shields.io/github/license/ashokrajar/mylabs-go?color=blue) [![Go Report Card](https://goreportcard.com/badge/github.com/ashokrajar/mylabs-go)](https://goreportcard.com/report/github.com/ashokrajar/mylabs-go)
 
 GoLang CI/CD experimental code repo
 
