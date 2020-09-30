@@ -21,7 +21,7 @@ trigger:
       - .gitignore
 
 pr:
-  autoCancel: false
+  autoCancel: true
   branches:
     include:
       - master
@@ -44,17 +44,18 @@ stages:
           name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-18.04'
+
       - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Mac_Build'
           pool:
             vmImage: 'macos-10.14'
-  # TODO: More work needed to enable windows support
-#      - template: templates/azure/jobs/build.yml
-#        parameters:
-#          name: 'Windows_Build'
-#          pool:
-#            vmImage: 'vs2017-win2016'
+
+      - template: templates/azure/jobs/build.yml
+        parameters:
+          name: 'Windows_Build'
+          pool:
+            vmImage: 'vs2017-win2016'
 
   - stage: Test
     jobs:
@@ -72,9 +73,9 @@ stages:
           name: 'Mac_Release'
           pool:
             vmImage: 'macos-10.14'
-# TODO: More work needed to enable windows support
-#      - template: templates/azure/jobs/release.yml
-#        parameters:
-#          name: 'Windows_Release'
-#          pool:
-#            vmImage: 'vs2017-win2016'
+
+      - template: templates/azure/jobs/release.yml
+        parameters:
+          name: 'Windows_Release'
+          pool:
+            vmImage: 'vs2017-win2016'

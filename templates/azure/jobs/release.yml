@@ -9,6 +9,8 @@ jobs:
       - template: ../steps/setupgo.yml
 
       - template: ../steps/buildapp.yml
+        parameters:
+          binDirectory: $(Build.BinariesDirectory)
 
       - task: CopyFiles@2
         displayName: 'Copy binary files to Artifact Stage Directory'
@@ -30,7 +32,6 @@ jobs:
             version=`./mylabs-go version`
             echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
           workingDirectory: $(Build.BinariesDirectory)
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
       - task: Bash@3
         displayName: 'Get/Set OS Specific Package Feed Name'
@@ -38,10 +39,9 @@ jobs:
           targetType: 'inline'
           script: |
             set -e -x
-            OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]"`
-            echo "##vso[task.setvariable variable=FEED_NAME;]$OS_NAME"
+            OS_NAME=`echo "$(Agent.OS)" | tr "[:upper:]" "[:lower:]" | sed "s/'//"`
+            echo "##vso[task.setvariable variable=FEED_NAME;]$OS_NAME"``
           workingDirectory: $(Build.BinariesDirectory)
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
       - task: UniversalPackages@0
         displayName: 'Publish Release Artifacts'
