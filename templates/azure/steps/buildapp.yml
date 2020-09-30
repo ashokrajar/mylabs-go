@@ -6,6 +6,6 @@ steps:
   - script: |
       set -e -x
       GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
-      make build BIN_DIR=${{ parameters.binDirectory }} GIT_BRANCH_NAME=$GITBRANCH GOOS=$(parameters.os)
+      make build BIN_DIR=${{ parameters.binDirectory }} GIT_BRANCH_NAME=$GITBRANCH GOOS=${{ parameters.os }}
     displayName: 'Build Application Binary'
 

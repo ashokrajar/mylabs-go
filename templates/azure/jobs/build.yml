@@ -12,4 +12,4 @@ jobs:
       - template: ../steps/buildapp.yml
         parameters:
           binDirectory: $(Build.BinariesDirectory)
-          os: $(parameters.os)
+          os: ${{ parameters.os }}
