@@ -44,18 +44,21 @@ stages:
           name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-18.04'
+          os: 'linux'
 
       - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Mac_Build'
           pool:
             vmImage: 'macos-10.14'
+          os: 'darwin'
 
       - template: templates/azure/jobs/build.yml
         parameters:
           name: 'Windows_Build'
           pool:
-            vmImage: 'vs2017-win2016'
+            vmImage: 'ubuntu-18.04'
+          os: 'windows'
 
   - stage: Test
     jobs:
@@ -68,14 +71,18 @@ stages:
           name: 'Linux_Release'
           pool:
             vmImage: 'ubuntu-18.04'
+          os: 'linux'
+
       - template: templates/azure/jobs/release.yml
         parameters:
           name: 'Mac_Release'
           pool:
             vmImage: 'macos-10.14'
+          os: 'darwin'
 
       - template: templates/azure/jobs/release.yml
         parameters:
           name: 'Windows_Release'
           pool:
-            vmImage: 'vs2017-win2016'
+            vmImage: 'ubuntu-18.04'
+          os: 'windows'
