@@ -57,7 +57,7 @@ stages:
         parameters:
           name: 'Windows_Build'
           pool:
-            vmImage: 'vs2017-win2016'
+            vmImage: 'windows-2019'
 
   - stage: Test
     jobs:
@@ -83,4 +83,4 @@ stages:
         parameters:
           name: 'Windows_Release'
           pool:
-            vmImage: 'vs2017-win2016'
+            vmImage: 'windows-2019'
