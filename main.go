@@ -28,6 +28,15 @@ import (
 
 var version = "0.3.0"
 
+var VersionSuffix string
+
+var VCSBranch string
+var VCSCommitID string
+var BuildTime string
+var BuildHost string
+var BuiltBy string
+var GOVersion string
+
 // Version will return version string
 func Version() string {
 	return version
@@ -45,7 +54,23 @@ func main() {
 
 	if len(args) > 1 {
 		if args[1] == "version" {
-			fmt.Println(Version())
+			if VersionSuffix == "" {
+				fmt.Printf("%s\n", version)
+			} else {
+				fmt.Printf("%s-%s\n", version, VersionSuffix)
+			}
+		} else if args[1] == "build-info" {
+			if VersionSuffix == "" {
+				fmt.Printf("Version       : %s\n", version)
+			} else {
+				fmt.Printf("Version       : %s-%s\n", version, VersionSuffix)
+			}
+			fmt.Printf("Git Branch    : %s\n", VCSBranch)
+			fmt.Printf("Git Commit ID : %s\n", VCSCommitID)
+			fmt.Printf("Build Time    : %s\n", BuildTime)
+			fmt.Printf("Built By      : %s\n", BuiltBy)
+			fmt.Printf("Build Host    : %s\n", BuildHost)
+			fmt.Printf("GO Version    : %s\n", GOVersion)
 		} else {
 			fmt.Println("Error : Invalid command argument")
 		}
