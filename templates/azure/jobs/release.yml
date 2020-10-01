@@ -29,6 +29,8 @@ jobs:
           targetType: 'inline'
           script: |
             set -e -x
+            pwd
+            ls
             OS=`go env GOOS`
             ARCH=`go env GOARCH`
             if [ $(Agent.OS) == 'Windows_NT' ]; then
