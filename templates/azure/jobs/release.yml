@@ -35,7 +35,6 @@ jobs:
               version=`./bin/mylabs-go_$OS\_$ARCH version`
             fi
             echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
-          workingDirectory: $(Build.BinariesDirectory)
 
       - task: Bash@3
         displayName: 'Get/Set OS Specific Package Feed Name'
@@ -45,7 +44,6 @@ jobs:
             set -e -x
             OS_NAME=`go env GOOS`
             echo "##vso[task.setvariable variable=FEED_NAME;]$OS_NAME"
-          workingDirectory: $(Build.BinariesDirectory)
 
       - task: UniversalPackages@0
         displayName: 'Publish Release Artifacts'
