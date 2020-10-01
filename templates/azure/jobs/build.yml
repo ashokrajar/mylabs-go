@@ -9,5 +9,3 @@ jobs:
       - template: ../steps/setupgo.yml
 
       - template: ../steps/buildapp.yml
-        parameters:
-          binDirectory: $(Build.BinariesDirectory)
