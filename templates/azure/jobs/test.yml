@@ -6,6 +6,8 @@ jobs:
           go.version: '1.13'
         GoVersion_1_14:
           go.version: '1.14'
+        GoVersion_1_15:
+          go.version: '1.15'
 
     pool:
       vmImage: 'ubuntu-18.04'
@@ -14,6 +16,10 @@ jobs:
       - template: ../steps/setupgo.yml
         parameters:
           goVersion: '$(go.version)'
+
+      - template: ../steps/buildapp.yml
+        parameters:
+          binDirectory: $(Build.BinariesDirectory)
 
       - script: |
           set -e -x

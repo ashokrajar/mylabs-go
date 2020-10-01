@@ -29,10 +29,12 @@ jobs:
           targetType: 'inline'
           script: |
             set -e -x
+            OS=`go env GOOS`
+            ARCH=`go env GOARCH`
             if [ $(Agent.OS) == 'Windows_NT' ]; then
-              version=`./mylabs-go.exe version`
+              version=`./mylabs-go_$OS_$ARCH.exe version`
             else
-              version=`./mylabs-go version`
+              version=`./mylabs-go_$OS_$ARCH version`
             fi
             echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
           workingDirectory: $(Build.BinariesDirectory)
