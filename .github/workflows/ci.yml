@@ -12,10 +12,10 @@ on:
       - 'v*.*.*'
     paths-ignore:
       - README.md
-        - LICENSE
-        - .travis.yml
-        - .azure-pipeline.yml
-        - templates/azure/*
+      - LICENSE
+      - .travis.yml
+      - .azure-pipeline.yml
+      - templates/azure/*
 
   pull_request:
     branches:

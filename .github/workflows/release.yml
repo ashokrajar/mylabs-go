@@ -2,13 +2,21 @@ on:
   push:
     branches:
       - master
-      - dev
+      - release/*
+      - hotfix/*
     tags:
-      - 'v*'
+      - 'v*.*.*'
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .azure-pipeline.yml
+      - templates/azure/*
 
 name: Release
 
 jobs:
+
   build:
     name: Build
     runs-on: ${{ matrix.operating-system }}

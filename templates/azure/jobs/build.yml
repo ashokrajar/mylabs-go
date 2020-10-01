@@ -1,7 +1,6 @@
 parameters:
   name: ''
   pool: ''
-  os: 'linux'
 
 jobs:
   - job: ${{ parameters.name }}
@@ -12,4 +11,3 @@ jobs:
       - template: ../steps/buildapp.yml
         parameters:
           binDirectory: $(Build.BinariesDirectory)
-          os: ${{ parameters.os }}

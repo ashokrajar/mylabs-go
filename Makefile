@@ -5,11 +5,11 @@ built_by := $(shell whoami)
 build_host := $(shell hostname)
 version_date := $(shell date +"%Y%m%d%H%M%S")
 go_version := $(shell go version)
+go_os := $(shell go env GOOS)
+go_arch := $(shell go env GOARCH)
 
 BIN_DIR=bin
 APP_NAME=mylabs-go
-GOOS=windows
-GOARCH=amd64
 
 ifeq ($(git_branch), master)
 	vsuffix=
@@ -18,10 +18,10 @@ else
 endif
 
 
-ifeq ($(GOOS), windows)
-	app_file_name=$(APP_NAME).exe
+ifeq ($(go_os), windows)
+	app_file_name=$(APP_NAME)_$(go_os)_$(go_arch).exe
 else
-	app_file_name=$(APP_NAME)
+	app_file_name=$(APP_NAME)_$(go_os)_$(go_arch)
 endif
 
 init:
