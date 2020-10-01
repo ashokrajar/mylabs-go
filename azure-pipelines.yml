@@ -57,8 +57,7 @@ stages:
         parameters:
           name: 'Windows_Build'
           pool:
-            vmImage: 'ubuntu-18.04'
-          os: 'windows'
+            vmImage: 'vs2017-win2016'
 
   - stage: Test
     jobs:
@@ -84,5 +83,4 @@ stages:
         parameters:
           name: 'Windows_Release'
           pool:
-            vmImage: 'ubuntu-18.04'
-          os: 'windows'
+            vmImage: 'vs2017-win2016'
