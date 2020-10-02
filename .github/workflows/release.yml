@@ -37,6 +37,14 @@ jobs:
       - name: Build
         run: make build
 
+      - name: Get OS & Arch
+        id: get-os-arch
+        run: |
+          OS=`go env GOOS`
+          ARCH=`go env ARCH`
+          echo '::set-output name=OS::$OS'
+          echo '::set-output name=ARCH::$ARCH'
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -55,6 +63,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: bin/mylabs-go-cli
+          asset_path: bin/mylabs-go-cli_${{ steps.get-os-arch.outputs.OS }}_${{ steps.get-os-arch.outputs.ARCH }}
           asset_name: mylabs-go-cli_${{ matrix.operating-system }}
           asset_content_type: application/zip
