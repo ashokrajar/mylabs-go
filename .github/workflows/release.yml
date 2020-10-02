@@ -41,7 +41,7 @@ jobs:
         id: get-os-arch
         run: |
           OS=`go env GOOS`
-          ARCH=`go env ARCH`
+          ARCH=`go env GOARCH`
           echo "::set-output name=OS::$OS"
           echo "::set-output name=ARCH::$ARCH"
 
