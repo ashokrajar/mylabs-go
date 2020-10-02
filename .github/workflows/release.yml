@@ -48,7 +48,9 @@ jobs:
       - name: Set Release Name
         id: set-release-name
         run: |
-          RELEASE_NAME=`bin/mylabs-go_${steps.get-os-arch.outputs.OS}_${steps.get-os-arch.outputs.ARCH} version`
+          OS=`go env GOOS`
+          ARCH=`go env GOARCH`
+          RELEASE_NAME=`bin/mylabs-go_$OS\_$ARCH version`
           echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
 
       - name: Create Release
