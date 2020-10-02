@@ -42,8 +42,8 @@ jobs:
         run: |
           OS=`go env GOOS`
           ARCH=`go env ARCH`
-          echo '::set-output name=OS::$OS'
-          echo '::set-output name=ARCH::$ARCH'
+          echo "::set-output name=OS::$OS"
+          echo "::set-output name=ARCH::$ARCH"
 
       - name: Create Release
         id: create_release
