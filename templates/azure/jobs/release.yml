@@ -49,7 +49,7 @@ jobs:
         displayName: 'Publish Release Artifacts'
         inputs:
           command: 'publish'
-          publishDirectory: '$(Build.ArtifactStagingDirectory)'
+          publishDirectory: '$(Build.ArtifactStagingDirectory)/bin'
           feedsToUsePublish: 'internal'
           vstsFeedPublish: '1354bdaa-1b77-41d3-a573-e85080e85d85/90f9f1a3-3b7f-4814-aea6-f06d7842d9af'
           vstsFeedPackagePublish: $(FEED_NAME)
