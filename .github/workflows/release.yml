@@ -60,7 +60,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}_${{ steps.get-os-arch.outputs.OS }}
           release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
           prerelease: false
