@@ -50,8 +50,9 @@ jobs:
         run: |
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
-          RELEASE_NAME=`bin/mylabs-go_$OS\_$ARCH version`
-          echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
+          VERSION=`bin/mylabs-go_$OS\_$ARCH version`
+
+          echo "::set-output name=RELEASE_NAME::$VERSION"
 
       - name: Create Release
         id: create_release
@@ -59,7 +60,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.set-release-name.outputs.OS }}
           release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
           prerelease: false
