@@ -7,4 +7,3 @@ steps:
         set -e -x
         GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
         make build GIT_BRANCH_NAME=$GITBRANCH
-
