@@ -42,13 +42,9 @@ jobs:
       name: Code Quality Tests
       script:
         - golangci-lint run
-
-    - stage: Test
-      name: Unit Tests
-      script:
+    - script:
         - make test
-
-    - stage: test
-      name: Vulnerabilty Analysis
-      script:
+      name: Unit Tests
+    - after_script:
         - sl analyze --wait --tag branch=$TRAVIS_BRANCH --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+      name: Vulnerabilty Analysis
