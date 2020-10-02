@@ -38,30 +38,12 @@ var BuiltBy string
 var GOVersion string
 
 // Version will return version string
-func Version(arg string) string {
-	if arg == "version" {
-		if VersionSuffix == "" {
-			return fmt.Sprintf("%s", version)
-		} else {
-			return fmt.Sprintf("%s-%s", version, VersionSuffix)
-		}
-	} else if arg == "build-info" {
-		if VersionSuffix == "" {
-			fmt.Printf("Version       : %s\n", version)
-		} else {
-			fmt.Printf("Version       : %s-%s\n", version, VersionSuffix)
-		}
-		fmt.Printf("Git Branch    : %s\n", VCSBranch)
-		fmt.Printf("Git Commit ID : %s\n", VCSCommitID)
-		fmt.Printf("Build Time    : %s\n", BuildTime)
-		fmt.Printf("Built By      : %s\n", BuiltBy)
-		fmt.Printf("Build Host    : %s\n", BuildHost)
-		fmt.Printf("GO Version    : %s\n", GOVersion)
-	} else {
-		fmt.Println("Error : Invalid command argument")
+func Version() string {
+	if VersionSuffix == "" {
+		return version
 	}
 
-	return ""
+	return fmt.Sprintf("%s-%s", version, VersionSuffix)
 }
 
 // HelloHome will return hello home string
@@ -75,7 +57,19 @@ func main() {
 	args := os.Args
 
 	if len(args) > 1 {
-		fmt.Println(Version(args[1]))
+		if args[1] == "version" {
+			fmt.Println(Version())
+		} else if args[1] == "build-info" {
+			fmt.Printf("Version       : %s\n", Version())
+			fmt.Printf("Git Branch    : %s\n", VCSBranch)
+			fmt.Printf("Git Commit ID : %s\n", VCSCommitID)
+			fmt.Printf("Build Time    : %s\n", BuildTime)
+			fmt.Printf("Built By      : %s\n", BuiltBy)
+			fmt.Printf("Build Host    : %s\n", BuildHost)
+			fmt.Printf("GO Version    : %s\n", GOVersion)
+		} else {
+			fmt.Println("Error : Invalid command argument")
+		}
 	} else {
 		fmt.Println(HelloHome())
 	}
