@@ -45,14 +45,20 @@ jobs:
           echo "::set-output name=OS::$OS"
           echo "::set-output name=ARCH::$ARCH"
 
+      - name: Set Release Name
+        id: set-release-name
+        run: |
+          RELEASE_NAME=`bin/mylabs-go_${steps.get-os-arch.outputs.OS}_${steps.get-os-arch.outputs.ARCH} version`
+          echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.set-release-name.outputs.OS }}
+          release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
           prerelease: false
 
@@ -63,6 +69,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: bin/mylabs-go-cli_${{ steps.get-os-arch.outputs.OS }}_${{ steps.get-os-arch.outputs.ARCH }}
+          asset_path: bin/mylabs-go_${{ steps.get-os-arch.outputs.OS }}_${{ steps.get-os-arch.outputs.ARCH }}
           asset_name: mylabs-go-cli_${{ matrix.operating-system }}
           asset_content_type: application/zip
