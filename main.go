@@ -38,12 +38,12 @@ var BuiltBy string
 var GOVersion string
 
 // Version will return version string
-func Version(arg string) {
+func Version(arg string) string {
 	if arg == "version" {
 		if VersionSuffix == "" {
-			fmt.Printf("%s\n", version)
+			return fmt.Sprintf("%s", version)
 		} else {
-			fmt.Printf("%s-%s\n", version, VersionSuffix)
+			return fmt.Sprintf("%s-%s", version, VersionSuffix)
 		}
 	} else if arg == "build-info" {
 		if VersionSuffix == "" {
@@ -60,6 +60,8 @@ func Version(arg string) {
 	} else {
 		fmt.Println("Error : Invalid command argument")
 	}
+
+	return ""
 }
 
 // HelloHome will return hello home string
@@ -73,7 +75,7 @@ func main() {
 	args := os.Args
 
 	if len(args) > 1 {
-		Version(args[1])
+		fmt.Println(Version(args[1]))
 	} else {
 		fmt.Println(HelloHome())
 	}

@@ -1,4 +1,9 @@
-git_branch := $(shell git rev-parse --abbrev-ref HEAD)
+ifdef GIT_BRANCH_NAME
+	git_branch=$(GIT_BRANCH_NAME)
+else
+	git_branch := $(shell git rev-parse --abbrev-ref HEAD | cut -f1 -d'/')
+endif
+
 git_commit_id := $(shell git rev-parse --short HEAD)
 build_time := $(shell date)
 built_by := $(shell whoami)
@@ -30,7 +35,7 @@ init:
 build: init
 	@echo "Building ..."
 	@go build -ldflags "-X 'main.VersionSuffix=$(vsuffix)' -X 'main.VCSBranch=$(git_branch)' -X 'main.BuildTime=$(build_time)' -X 'main.VCSCommitID=$(git_commit_id)' -X 'main.BuiltBy=$(built_by)' -X 'main.BuildHost=$(build_host)' -X 'main.GOVersion=$(go_version)'" -o $(BIN_DIR)/$(app_file_name)
-	@echo "Binary $(APP_NAME) saved in $(BIN_DIR)"
+	@echo "Binary $(app_file_name) saved in $(BIN_DIR)"
 
 test:
 	@go test -v ./...

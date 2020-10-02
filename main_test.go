@@ -43,3 +43,27 @@ func Test_helloHome(t *testing.T) {
 		})
 	}
 }
+
+func TestVersion(t *testing.T) {
+	type args struct {
+		arg string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Show Version",
+			args: args{arg: "version"},
+			want: version,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Version(tt.args.arg); got != tt.want {
+				t.Errorf("Version() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
