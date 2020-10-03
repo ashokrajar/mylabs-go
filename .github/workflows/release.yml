@@ -3,7 +3,6 @@ on:
     branches:
       - master
       - release/*
-      - hotfix/*
     tags:
       - 'v*.*.*'
     paths-ignore:
@@ -40,7 +39,15 @@ jobs:
           ARCH=`go env GOARCH`
           VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
 
+          GIT_BRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
+          if [ $GIT_BRANCH == 'master']; then
+            PRERELEASE=false
+          else
+            PRERELEASE=true
+          fi
+
           echo "::set-output name=RELEASE_NAME::$VERSION"
+          echo "::set-output name=PRERELEASE::$PRERELEASE"
         shell: bash
 
       - name: Create Release
@@ -52,7 +59,7 @@ jobs:
           tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}
           release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.set-release-name.outputs.PRERELEASE }}
 
       - name: Output Release URL File
         run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
