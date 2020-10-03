@@ -93,9 +93,9 @@ jobs:
           echo "::set-output name=OS::$OS"
 
           if [ $OS == 'windows' ]; then
-            echo ::set-output name=app_file_name::mylabs-go_$OS_$ARCH.exe
+            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH.exe
           else
-            echo ::set-output name=app_file_name::mylabs-go_$OS_$ARCH
+            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH
           fi
         shell: bash
 
