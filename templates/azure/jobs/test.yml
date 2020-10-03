@@ -59,6 +59,14 @@ jobs:
           summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
 
       - script: |
+          curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
+          $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+        displayName: 'Run Vulnerability Checks'
+        env:
+          SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
+          SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
+
+      - script: |
           set -e -x
           docker run \
           -v "$(Build.SourcesDirectory):/app:cached" \
