@@ -30,6 +30,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v1
 
+      - name: Build
+        run: make build
+
       - name: Set Release Name
         id: set-release-name
         run: |
