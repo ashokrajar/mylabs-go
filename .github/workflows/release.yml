@@ -17,8 +17,45 @@ name: Release
 
 jobs:
 
-  build:
-    name: Build
+  createrelease:
+    name: createrelease
+    runs-on: [ macOS-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Set Release Name
+        id: set-release-name
+        run: |
+          OS=`go env GOOS`
+          ARCH=`go env GOARCH`
+          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
+
+          echo "::set-output name=RELEASE_NAME::$VERSION"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Output Release URL File
+        run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+      - name: Save Release URL File for publish
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_url
+          path: release_url.txt
+
+  build_and_upload:
+    needs: [createrelease]
+    name: Build and Upload
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
@@ -45,25 +82,11 @@ jobs:
           echo "::set-output name=OS::$OS"
           echo "::set-output name=ARCH::$ARCH"
 
-      - name: Set Release Name
-        id: set-release-name
+      - name: Get Release File Name & Upload URL
+        id: get_release_info
         run: |
-          OS=`go env GOOS`
-          ARCH=`go env GOARCH`
-          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
-
-          echo "::set-output name=RELEASE_NAME::$VERSION"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}_${{ steps.get-os-arch.outputs.OS }}
-          release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
-          draft: false
-          prerelease: false
+          value=`cat release_url/release_url.txt`
+          echo ::set-output name=upload_url::$value
 
       - name: Upload Release Asset
         id: upload-release-asset
@@ -71,7 +94,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
           asset_path: bin/mylabs-go_${{ steps.get-os-arch.outputs.OS }}_${{ steps.get-os-arch.outputs.ARCH }}
           asset_name: mylabs-go-cli_${{ matrix.operating-system }}
           asset_content_type: application/zip
