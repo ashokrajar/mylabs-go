@@ -19,7 +19,7 @@ jobs:
 
   createrelease:
     name: createrelease
-    runs-on: [ macOS-latest ]
+    runs-on: [ ubuntu-latest ]
     steps:
       - name: Set up Go 1.14
         id: go
@@ -90,6 +90,11 @@ jobs:
           ARCH=`go env GOARCH`
           echo "::set-output name=OS::$OS"
           echo "::set-output name=ARCH::$ARCH"
+
+      - name: Load Release URL File from release job
+        uses: actions/download-artifact@v1
+        with:
+          name: release_url
 
       - name: Get Release File Name & Upload URL
         id: get_release_info
