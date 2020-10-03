@@ -26,7 +26,7 @@ import (
 	"os"
 )
 
-var version = "0.5.0"
+var version = "0.5.2"
 
 var VersionSuffix string
 
