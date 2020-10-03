@@ -84,13 +84,19 @@ jobs:
       - name: Build
         run: make build
 
-      - name: Get OS & Arch
+      - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
         run: |
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
+
           echo "::set-output name=OS::$OS"
-          echo "::set-output name=ARCH::$ARCH"
+
+          if [ $OS == 'windows' ]; then
+            echo ::set-output name=app_file_name::mylabs-go_$OS_$ARCH.exe
+          else
+            echo ::set-output name=app_file_name::mylabs-go_$OS_$ARCH
+          fi
         shell: bash
 
       - name: Load Release URL File from release job
@@ -112,6 +118,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release_info.outputs.upload_url }}
-          asset_path: bin/mylabs-go_${{ steps.get-os-arch.outputs.OS }}_${{ steps.get-os-arch.outputs.ARCH }}
-          asset_name: mylabs-go-cli_${{ matrix.operating-system }}
+          asset_path: bin/${{ steps.get-os-arch.outputs.app_file_name }}
+          asset_name: ${{ steps.get-os-arch.outputs.app_file_name }}
           asset_content_type: application/zip
