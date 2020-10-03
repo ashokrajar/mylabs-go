@@ -41,6 +41,7 @@ jobs:
           VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
 
           echo "::set-output name=RELEASE_NAME::$VERSION"
+        shell: bash
 
       - name: Create Release
         id: create_release
@@ -90,6 +91,7 @@ jobs:
           ARCH=`go env GOARCH`
           echo "::set-output name=OS::$OS"
           echo "::set-output name=ARCH::$ARCH"
+        shell: bash
 
       - name: Load Release URL File from release job
         uses: actions/download-artifact@v1
@@ -101,6 +103,7 @@ jobs:
         run: |
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
+        shell: bash
 
       - name: Upload Release Asset
         id: upload-release-asset
