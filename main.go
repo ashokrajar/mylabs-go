@@ -26,11 +26,24 @@ import (
 	"os"
 )
 
-var version = "0.4.0"
+var version = "0.5.2"
+
+var VersionSuffix string
+
+var VCSBranch string
+var VCSCommitID string
+var BuildTime string
+var BuildHost string
+var BuiltBy string
+var GOVersion string
 
 // Version will return version string
 func Version() string {
-	return version
+	if VersionSuffix == "" {
+		return version
+	}
+
+	return fmt.Sprintf("%s-%s", version, VersionSuffix)
 }
 
 // HelloHome will return hello home string
@@ -46,6 +59,14 @@ func main() {
 	if len(args) > 1 {
 		if args[1] == "version" {
 			fmt.Println(Version())
+		} else if args[1] == "build-info" {
+			fmt.Printf("Version       : %s\n", Version())
+			fmt.Printf("Git Branch    : %s\n", VCSBranch)
+			fmt.Printf("Git Commit ID : %s\n", VCSCommitID)
+			fmt.Printf("Build Time    : %s\n", BuildTime)
+			fmt.Printf("Built By      : %s\n", BuiltBy)
+			fmt.Printf("Build Host    : %s\n", BuildHost)
+			fmt.Printf("GO Version    : %s\n", GOVersion)
 		} else {
 			fmt.Println("Error : Invalid command argument")
 		}

@@ -1,0 +1,130 @@
+on:
+  push:
+    branches:
+      - master
+      - release/*
+    tags:
+      - 'v*.*.*'
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .travis.yml
+      - .azure-pipeline.yml
+      - templates/azure/*
+
+name: Release
+
+jobs:
+
+  createrelease:
+    name: createrelease
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Set up Go 1.14
+        id: go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Build
+        run: make build
+
+      - name: Set Release Name
+        id: set-release-name
+        run: |
+          OS=`go env GOOS`
+          ARCH=`go env GOARCH`
+          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
+
+          GIT_BRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
+          if [ $GIT_BRANCH == 'master']; then
+            PRERELEASE=false
+          else
+            PRERELEASE=true
+          fi
+
+          echo "::set-output name=RELEASE_NAME::$VERSION"
+          echo "::set-output name=PRERELEASE::$PRERELEASE"
+        shell: bash
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          draft: false
+          prerelease: ${{ steps.set-release-name.outputs.PRERELEASE }}
+
+      - name: Output Release URL File
+        run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+      - name: Save Release URL File for publish
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_url
+          path: release_url.txt
+
+  build_and_release:
+    needs: [createrelease]
+    name: Build and release
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: make build
+
+      - name: Get/Set OS, Arch & App File Name
+        id: get-os-arch
+        run: |
+          OS=`go env GOOS`
+          ARCH=`go env GOARCH`
+
+          echo "::set-output name=OS::$OS"
+
+          if [ $OS == 'windows' ]; then
+            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH.exe
+          else
+            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH
+          fi
+        shell: bash
+
+      - name: Load Release URL File from release job
+        uses: actions/download-artifact@v1
+        with:
+          name: release_url
+
+      - name: Get Release File Name & Upload URL
+        id: get_release_info
+        run: |
+          value=`cat release_url/release_url.txt`
+          echo ::set-output name=upload_url::$value
+        shell: bash
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          asset_path: bin/${{ steps.get-os-arch.outputs.app_file_name }}
+          asset_name: ${{ steps.get-os-arch.outputs.app_file_name }}
+          asset_content_type: application/zip

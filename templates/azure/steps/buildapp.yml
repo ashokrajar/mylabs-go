@@ -1,7 +1,9 @@
 steps:
-  - task: Go@0
+  - task: Bash@3
     displayName: 'Build Application Binary'
     inputs:
-      command: 'build'
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
-      arguments: '-o $(Build.BinariesDirectory)/mylabs-go'
+      targetType: 'inline'
+      script: |
+        set -e -x
+        GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
+        make build GIT_BRANCH_NAME=$GITBRANCH

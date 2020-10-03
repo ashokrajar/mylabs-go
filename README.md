@@ -1,4 +1,4 @@
-# mylabs-go ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ashokrajar/mylabs-go?color=success) ![GitHub](https://img.shields.io/github/license/ashokrajar/mylabs-go?color=blue)
+# mylabs-go ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ashokrajar/mylabs-go?color=success) ![GitHub](https://img.shields.io/github/license/ashokrajar/mylabs-go?color=blue) [![Go Report Card](https://goreportcard.com/badge/github.com/ashokrajar/mylabs-go)](https://goreportcard.com/report/github.com/ashokrajar/mylabs-go)
 
 GoLang CI/CD experimental code repo
 
@@ -16,17 +16,22 @@ Which covers these,
 * Code Quality Gates
 * Unit Tests
 * Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io))
-* Build Binary
-* Release [Cooking..]
+* Build Binary (Linux, MacOS, Windows)
+* Release [Azure & GitHub]
 
 ### Covered Samples & Examples
 * Azure Pipelines
   * Multi branch trigger
   * Multiple platform support with parallel build
+* Azure Artifacts (Release)
 * GitHub Actions
+  * Multi branch trigger 
+  * Multiple platform support with parallel build
+* GitHub Release
+* Travis CI
 
 #### Road Map
-* Travis CI
+* Automated Deployments
 * Semaphore
+* CircleCI
 * More TBD
-* Windows Support

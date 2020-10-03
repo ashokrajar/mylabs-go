@@ -6,6 +6,8 @@ jobs:
           go.version: '1.13'
         GoVersion_1_14:
           go.version: '1.14'
+        GoVersion_1_15:
+          go.version: '1.15'
 
     pool:
       vmImage: 'ubuntu-18.04'
@@ -15,6 +17,8 @@ jobs:
         parameters:
           goVersion: '$(go.version)'
 
+      - template: ../steps/buildapp.yml
+
       - script: |
           set -e -x
           go version
@@ -22,8 +26,7 @@ jobs:
           go get github.com/axw/gocov/gocov
           go get github.com/AlekSi/gocov-xml
 
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
-          curl https://cdn.shiftleft.io/download/sl > $(go env GOPATH)/bin/sl && chmod a+rx $(go env GOPATH)/bin/sl
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.31.0
         displayName: 'Install Dependencies'
 
       - script: |
@@ -55,13 +58,13 @@ jobs:
           codeCoverageTool: Cobertura
           summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
 
-      - script: |
-          curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
-          $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
-        displayName: 'Run Vulnerability Checks'
-        env:
-          SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
-          SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
+#      - script: |
+#          curl https://cdn.shiftleft.io/download/sl > $BUILD_SOURCESDIRECTORY/sl && chmod a+rx $BUILD_SOURCESDIRECTORY/sl
+#          $BUILD_SOURCESDIRECTORY/sl analyze --wait --tag branch=$BUILD_SOURCEBRANCHNAME --tag app.group=MyLabs --tag app.language=go --app MyLabs-G0 --cpg --go ./...
+#        displayName: 'Run Vulnerability Checks'
+#        env:
+#          SHIFTLEFT_ORG_ID: $(SHIFTLEFT_ORG_ID)
+#          SHIFTLEFT_ACCESS_TOKEN: $(SHIFTLEFT_ACCESS_TOKEN)
 
       - script: |
           set -e -x
@@ -70,11 +73,11 @@ jobs:
           -v "$(Build.ArtifactStagingDirectory):/reports:cached" \
           shiftleft/sast-scan scan --src /app \
           --out_dir /reports/CodeAnalysisLogs
-        displayName: "Perform Vulnerability Scan"
+        displayName: "Perform ShiftLeft SAST Scan"
         continueOnError: "true"
 
       - task: PublishBuildArtifacts@1
-        displayName: "Publish Vulnerability Scan Results"
+        displayName: "Publish ShiftLeft SAST Scan Results"
         inputs:
           PathtoPublish: "$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs"
           ArtifactName: "CodeAnalysisLogs"
