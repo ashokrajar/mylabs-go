@@ -30,8 +30,8 @@ on:
 
 jobs:
 
-  build:
-    name: Build
+  build_and_test:
+    name: Build and Test
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
