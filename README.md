@@ -31,7 +31,13 @@ Which covers these,
 * Travis CI
 
 #### Road Map
+* AWS Code Commit/Build
 * Automated Deployments
+  * AWS
+  * Azure
+  * TravisCI
+  * Github Actions
+  * CircleCI
 * Semaphore
 * CircleCI
 * More TBD
