@@ -3,7 +3,7 @@ language: go
 branches:
   only:
     - master
-    - dev
+    - develop
     - feature/*
     - release/*
     - hotfix/*
@@ -21,7 +21,7 @@ env:
 
 install:
   - curl https://cdn.shiftleft.io/download/sl > sl && sudo mv sl /usr/local/bin/  && sudo chmod a+rx /usr/local/bin/sl
-  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin v1.31.0
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin latest
   - sl auth --org $SHIFTLEFT_ORG_ID --token $SHIFTLEFT_ACCESS_TOKEN --no-diagnostic
 
 stages:

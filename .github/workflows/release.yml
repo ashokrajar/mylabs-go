@@ -2,9 +2,10 @@ on:
   push:
     branches:
       - master
+      - develop
       - release/*
-    tags:
-      - 'v*.*.*'
+      - feature/*
+      - hotfix/*
     paths-ignore:
       - README.md
       - LICENSE
@@ -37,17 +38,16 @@ jobs:
         run: |
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
-          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d+`
+          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d-`
 
           GIT_BRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
           if [ $GIT_BRANCH == 'master']; then
-            PRERELEASE=false
+            echo "::set-output name=RELEASE_NAME::$VERSION"
+            echo "::set-output name=PRERELEASE::false"
           else
-            PRERELEASE=true
+            echo "::set-output name=RELEASE_NAME::$VERSION-rc"
+            echo "::set-output name=PRERELEASE::true"
           fi
-
-          echo "::set-output name=RELEASE_NAME::$VERSION"
-          echo "::set-output name=PRERELEASE::$PRERELEASE"
         shell: bash
 
       - name: Create Release

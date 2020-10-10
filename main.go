@@ -26,7 +26,9 @@ import (
 	"os"
 )
 
-var version = "0.5.2"
+var MajorVersion string
+var MinorVersion string
+var PatchVersion string
 
 var VersionSuffix string
 
@@ -40,10 +42,10 @@ var GOVersion string
 // Version will return version string
 func Version() string {
 	if VersionSuffix == "" {
-		return version
+		return fmt.Sprintf("%s.%s.%s", MajorVersion, MinorVersion, PatchVersion)
 	}
 
-	return fmt.Sprintf("%s-%s", version, VersionSuffix)
+	return fmt.Sprintf("%s.%s.%s-%s", MajorVersion, MinorVersion, PatchVersion, VersionSuffix)
 }
 
 // HelloHome will return hello home string

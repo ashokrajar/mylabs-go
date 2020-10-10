@@ -25,6 +25,7 @@ pr:
   branches:
     include:
       - master
+      - dev
   paths:
     exclude:
       - README.md
