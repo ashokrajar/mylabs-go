@@ -60,7 +60,8 @@ jobs:
       - name: Build
         run: |
           set -e -x
-          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
+          GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
+          make build GIT_BRANCH_NAME=$GITBRANCH
 
       - name: Run Vulnerability Checks
         run: |
@@ -104,7 +105,8 @@ jobs:
       - name: Build
         run: |
           set -e -x
-          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
+          GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
+          make build GIT_BRANCH_NAME=$GITBRANCH
 
       - name: Set Release Name
         id: set-release-name
@@ -166,7 +168,9 @@ jobs:
       - name: Build
         run: |
           set -e -x
-          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
+          GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
+          make build GIT_BRANCH_NAME=$GITBRANCH
+        shell: bash
 
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
