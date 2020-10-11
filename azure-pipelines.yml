@@ -47,7 +47,7 @@ stages:
           appName: $(APPNAME)
           name: 'Linux_Build'
           pool:
-            vmImage: 'ubuntu-18.04'
+            vmImage: 'ubuntu-latest'
           os: 'linux'
 
       - template: templates/azure/jobs/build.yml
@@ -55,7 +55,7 @@ stages:
           appName: $(APPNAME)
           name: 'Mac_Build'
           pool:
-            vmImage: 'macos-10.14'
+            vmImage: 'macos-latest'
           os: 'darwin'
 
       - template: templates/azure/jobs/build.yml
@@ -63,7 +63,7 @@ stages:
           appName: $(APPNAME)
           name: 'Windows_Build'
           pool:
-            vmImage: 'windows-2019'
+            vmImage: 'windows-latest'
 
   - stage: Test
     jobs:
@@ -76,7 +76,7 @@ stages:
           appName: $(APPNAME)
           name: 'Linux_Release'
           pool:
-            vmImage: 'ubuntu-18.04'
+            vmImage: 'ubuntu-latest'
           os: 'linux'
 
       - template: templates/azure/jobs/release.yml
@@ -84,7 +84,7 @@ stages:
           appName: $(APPNAME)
           name: 'Mac_Release'
           pool:
-            vmImage: 'macos-10.14'
+            vmImage: 'macos-latest'
           os: 'darwin'
 
       - template: templates/azure/jobs/release.yml
@@ -92,4 +92,4 @@ stages:
           appName: $(APPNAME)
           name: 'Windows_Release'
           pool:
-            vmImage: 'windows-2019'
+            vmImage: 'windows-latest'
