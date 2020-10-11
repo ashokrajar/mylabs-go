@@ -94,7 +94,7 @@ jobs:
           path: bin
 
   createrelease:
-    if: ${{ eq(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
+    if: ${{ startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
     name: Create Release
     needs: [ build_and_test ]
     runs-on: [ ubuntu-latest ]
@@ -153,7 +153,7 @@ jobs:
           path: release_url.txt
 
   build_and_release:
-    if: ${{ eq(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
+    if: ${{ startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
     needs: [ createrelease ]
     name: Build and release
     runs-on: ${{ matrix.operating-system }}
