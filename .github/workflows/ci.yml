@@ -107,7 +107,7 @@ jobs:
         run: |
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
-          VERSION=`bin/${{ env.appname }}_$OS\_$ARCH version | cut -f1 -d-`
+          VERSION=`bin/${{ env.appname }}_$OS\_$ARCH version`
 
           GIT_BRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
 
