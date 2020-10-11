@@ -105,6 +105,7 @@ jobs:
       - name: Set Release Name
         id: set-release-name
         run: |
+          set -e -x
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
           VERSION=`bin/${{ env.appname }}_$OS\_$ARCH version`
@@ -164,6 +165,7 @@ jobs:
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
         run: |
+          set -e -x
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
 
@@ -184,6 +186,7 @@ jobs:
       - name: Get Release File Name & Upload URL
         id: get_release_info
         run: |
+          set -e -x
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
         shell: bash
