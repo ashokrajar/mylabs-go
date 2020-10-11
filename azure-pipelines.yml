@@ -70,6 +70,7 @@ stages:
       - template: templates/azure/jobs/test.yml
 
   - stage: Release
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hostfix'))
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:

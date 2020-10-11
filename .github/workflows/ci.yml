@@ -5,10 +5,10 @@ on:
     branches:
       - master
       - develop
-      - release/*
-      - feature/*
-      - hotfix/*
-      - bugfix/*
+      - 'release/**'
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'bugfix/**'
     paths-ignore:
       - README.md
       - LICENSE
@@ -22,14 +22,18 @@ on:
       - develop
     paths-ignore:
       - README.md
-        - LICENSE
-        - .travis.yml
-        - .azure-pipeline.yml
-        - templates/azure/*
+      - LICENSE
+      - .travis.yml
+      - .azure-pipeline.yml
+      - templates/azure/*
 
 env:
   major_version: 0
   appname: 'mylabs-go'
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
 
@@ -90,6 +94,7 @@ jobs:
           path: bin
 
   createrelease:
+    if: ${{ eq(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
     name: Create Release
     needs: [ build_and_test ]
     runs-on: [ ubuntu-latest ]
@@ -126,7 +131,6 @@ jobs:
           else
             echo "::set-output name=PRERELEASE::true"
           fi
-        shell: bash
 
       - name: Create Release
         id: create_release
@@ -135,7 +139,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.set-release-name.outputs.RELEASE_NAME }}
-          release_name: Release ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          release_name: v${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
           prerelease: ${{ steps.set-release-name.outputs.PRERELEASE }}
 
@@ -149,6 +153,7 @@ jobs:
           path: release_url.txt
 
   build_and_release:
+    if: ${{ eq(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/heads/hotfix') }}
     needs: [ createrelease ]
     name: Build and release
     runs-on: ${{ matrix.operating-system }}
@@ -171,7 +176,6 @@ jobs:
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
           make build GIT_BRANCH_NAME=$GITBRANCH
-        shell: bash
 
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
@@ -187,7 +191,6 @@ jobs:
           else
             echo ::set-output name=app_file_name::${{ env.appname }}_$OS\_$ARCH
           fi
-        shell: bash
 
       - name: Load Release URL File from release job
         uses: actions/download-artifact@v1
@@ -200,7 +203,6 @@ jobs:
           set -e -x
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
-        shell: bash
 
       - name: Upload Release Asset
         id: upload-release-asset
