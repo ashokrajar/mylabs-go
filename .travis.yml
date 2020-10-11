@@ -7,7 +7,7 @@ branches:
     - feature/*
     - release/*
     - hotfix/*
-    - hotfix/*
+    - bugfix/*
 
 os:
   - linux

@@ -6,6 +6,7 @@ on:
       - release/*
       - feature/*
       - hotfix/*
+      - bugfix/*
     paths-ignore:
       - README.md
       - LICENSE
@@ -14,6 +15,9 @@ on:
       - templates/azure/*
 
 name: Release
+
+env:
+  appname: 'mylabs-go'
 
 jobs:
 
@@ -38,14 +42,15 @@ jobs:
         run: |
           OS=`go env GOOS`
           ARCH=`go env GOARCH`
-          VERSION=`bin/mylabs-go_$OS\_$ARCH version | cut -f1 -d-`
+          VERSION=`bin/${{ env.appname }}_$OS\_$ARCH version | cut -f1 -d-`
 
           GIT_BRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          if [ $GIT_BRANCH == 'master']; then
-            echo "::set-output name=RELEASE_NAME::$VERSION"
+
+          echo "::set-output name=RELEASE_NAME::$VERSION"
+
+          if [ $GIT_BRANCH == 'master' ]; then
             echo "::set-output name=PRERELEASE::false"
           else
-            echo "::set-output name=RELEASE_NAME::$VERSION-rc"
             echo "::set-output name=PRERELEASE::true"
           fi
         shell: bash
@@ -100,9 +105,9 @@ jobs:
           echo "::set-output name=OS::$OS"
 
           if [ $OS == 'windows' ]; then
-            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH.exe
+            echo ::set-output name=app_file_name::${{ env.appname }}_$OS\_$ARCH.exe
           else
-            echo ::set-output name=app_file_name::mylabs-go_$OS\_$ARCH
+            echo ::set-output name=app_file_name::${{ env.appname }}_$OS\_$ARCH
           fi
         shell: bash
 

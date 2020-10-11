@@ -1,3 +1,6 @@
+parameters:
+  appName: ''
+
 steps:
   - task: Bash@3
     displayName: 'Build Application Binary'
@@ -6,4 +9,4 @@ steps:
       script: |
         set -e -x
         GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
-        make build GIT_BRANCH_NAME=$GITBRANCH
+        make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$GITBRANCH

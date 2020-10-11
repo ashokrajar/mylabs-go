@@ -8,6 +8,7 @@ on:
       - release/*
       - feature/*
       - hotfix/*
+      - bugfix/*
     tags:
       - 'v*.*.*'
     paths-ignore:

@@ -12,6 +12,7 @@ trigger:
       - release/*
       - feature/*
       - hotfix/*
+      - bugfix/*
   paths:
     exclude:
       - README.md
@@ -35,6 +36,7 @@ pr:
       - .gitignore
 
 variables:
+  APPNAME: mylabs-go
   GOPATH: '$(Pipeline.Workspace)/gowork'
 
 stages:
@@ -42,6 +44,7 @@ stages:
     jobs:
       - template: templates/azure/jobs/build.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-18.04'
@@ -49,6 +52,7 @@ stages:
 
       - template: templates/azure/jobs/build.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Mac_Build'
           pool:
             vmImage: 'macos-10.14'
@@ -56,6 +60,7 @@ stages:
 
       - template: templates/azure/jobs/build.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Windows_Build'
           pool:
             vmImage: 'windows-2019'
@@ -68,6 +73,7 @@ stages:
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Linux_Release'
           pool:
             vmImage: 'ubuntu-18.04'
@@ -75,6 +81,7 @@ stages:
 
       - template: templates/azure/jobs/release.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Mac_Release'
           pool:
             vmImage: 'macos-10.14'
@@ -82,6 +89,7 @@ stages:
 
       - template: templates/azure/jobs/release.yml
         parameters:
+          appName: $(APPNAME)
           name: 'Windows_Release'
           pool:
             vmImage: 'windows-2019'

@@ -1,6 +1,7 @@
 parameters:
   name: ''
   pool: ''
+  appName: ''
 
 jobs:
   - job: ${{ parameters.name }}
@@ -9,3 +10,5 @@ jobs:
       - template: ../steps/setupgo.yml
 
       - template: ../steps/buildapp.yml
+        parameters:
+          appName: ${{ parameters.appName }}
