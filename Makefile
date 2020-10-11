@@ -23,10 +23,12 @@ ifeq ($(GIT_BRANCH_NAME), master)
 	vsuffix=
 else ifeq ($(GIT_BRANCH_NAME), hostfix)
 	vsuffix=hf.$(BUILD_METADATA)
+else ifeq ($(GIT_BRANCH_NAME), bugfix)
+	vsuffix=bug+$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), release)
 	vsuffix=rc.$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), develop)
-	vsuffix=dev+$(BUILD_METADATA)
+	vsuffix=next+$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), feature)
 	vsuffix=feat+$(BUILD_METADATA)
 else
