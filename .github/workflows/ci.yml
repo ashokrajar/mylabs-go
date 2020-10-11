@@ -87,7 +87,7 @@ jobs:
 
   createrelease:
     name: Create Release
-    needs: [ 'Build and Test' ]
+    needs: [ build_and_test ]
     runs-on: [ ubuntu-latest ]
     steps:
       - name: Set up Go 1.14
@@ -141,7 +141,7 @@ jobs:
           path: release_url.txt
 
   build_and_release:
-    needs: [ 'Create Release' ]
+    needs: [ createrelease ]
     name: Build and release
     runs-on: ${{ matrix.operating-system }}
     strategy:
