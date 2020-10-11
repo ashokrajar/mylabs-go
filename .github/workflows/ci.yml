@@ -58,7 +58,9 @@ jobs:
         run: mkdir -p bin
 
       - name: Build
-        run: make build
+        run: |
+          set -e -x
+          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
 
       - name: Run Vulnerability Checks
         run: |
@@ -100,7 +102,9 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Build
-        run: make build
+        run: |
+          set -e -x
+          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
 
       - name: Set Release Name
         id: set-release-name
@@ -160,7 +164,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: make build
+        run: |
+          set -e -x
+          make build GIT_BRANCH_NAME=${GITHUB_REF##*/}
 
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
