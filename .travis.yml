@@ -35,7 +35,7 @@ jobs:
   include:
     - stage: Build
       script:
-        - make build MAJOR_VERSION=$MAJORVER MINOR_VERSION=$MINORVER PATCH_VERSION=$PATCHVER
+        - make build APP_VERSION=$MAJORVER.$MINORVER.$PATCHVER
 
     - stage: Test
       name: Code Quality Tests
