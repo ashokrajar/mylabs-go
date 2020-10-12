@@ -25,3 +25,8 @@ jobs:
           appName: ${{ parameters.appName }}
           appVer: ${{ parameters.appVer }}
           brPatchVer: ${{ parameters.brPatchVer }}
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Build Artifacts'
+        inputs:
+          artifactName: $(Agent.OS)

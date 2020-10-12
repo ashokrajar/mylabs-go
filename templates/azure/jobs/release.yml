@@ -26,17 +26,6 @@ jobs:
           appVer: ${{ parameters.appVer }}
           brPatchVer: ${{ parameters.brPatchVer }}
 
-      - task: CopyFiles@2
-        displayName: 'Copy binary files to Artifact Stage Directory'
-        inputs:
-          contents: 'bin/**'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Build Artifacts'
-        inputs:
-          artifactName: $(Agent.OS)
-
       - task: Bash@3
         displayName: 'Get/Set Application/Package Version'
         inputs:

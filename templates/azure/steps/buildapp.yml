@@ -12,3 +12,9 @@ steps:
         set -e -x
         GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
         make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ parameters.appVer }} BR_PATCH_VERSION=${{ parameters.brPatchVer }}
+
+  - task: CopyFiles@2
+    displayName: 'Copy binary files to Artifact Stage Directory'
+    inputs:
+      contents: 'bin/**'
+      targetFolder: $(Build.ArtifactStagingDirectory)
