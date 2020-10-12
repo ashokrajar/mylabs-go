@@ -57,7 +57,7 @@ stages:
               targetType: 'inline'
               script: |
                 set -e -x
-                GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///" | tr / -`
+                GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///" | cut -f1 -d'/'`
                 echo "##vso[build.updatebuildnumber]$(major).$(minor).$(patch)-$GITBRANCH.$(brpatch)"
 
   - stage: Build
@@ -75,7 +75,7 @@ stages:
 
   - stage: Release
     displayName: Release (Multi-Platform)
-    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hostfix'))
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:
