@@ -1,5 +1,8 @@
 parameters:
   appName: ''
+  majorVer: ''
+  minorVer: ''
+  parchVer: ''
 
 steps:
   - task: Bash@3
@@ -9,4 +12,4 @@ steps:
       script: |
         set -e -x
         GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
-        make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$GITBRANCH
+        make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$GITBRANCH MAJOR_VERSION=${{ parameters.majorVer }} MINOR_VERSION=${{ parameters.minorVer }} PATCH_VERSION=${{ parameters.patchVer }}

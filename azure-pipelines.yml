@@ -37,7 +37,12 @@ pr:
 
 variables:
   APPNAME: mylabs-go
+  major: 0
+  minor: 5
+  PATCHVER: $(Rev:.r)
   GOPATH: '$(Pipeline.Workspace)/gowork'
+
+name: $(major).$(minor)$(Rev:.r)
 
 stages:
   - stage: Build
@@ -48,7 +53,9 @@ stages:
           name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-latest'
-          os: 'linux'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/build.yml
         parameters:
@@ -56,7 +63,9 @@ stages:
           name: 'Mac_Build'
           pool:
             vmImage: 'macos-latest'
-          os: 'darwin'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/build.yml
         parameters:
@@ -64,6 +73,9 @@ stages:
           name: 'Windows_Build'
           pool:
             vmImage: 'windows-latest'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)
 
   - stage: Test
     jobs:
@@ -78,7 +90,9 @@ stages:
           name: 'Linux_Release'
           pool:
             vmImage: 'ubuntu-latest'
-          os: 'linux'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/release.yml
         parameters:
@@ -86,7 +100,9 @@ stages:
           name: 'Mac_Release'
           pool:
             vmImage: 'macos-latest'
-          os: 'darwin'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/release.yml
         parameters:
@@ -94,3 +110,6 @@ stages:
           name: 'Windows_Release'
           pool:
             vmImage: 'windows-latest'
+          majorVer: $(MAJORVER)
+          minorVer: $(MINORVER)
+          patchVer: $(PATCHVER)

@@ -18,6 +18,9 @@ go:
 
 env:
   - GO111MODULE=on
+  - MAJORVER=0
+  - MINORVER=5
+  - PATCHVER=3
 
 install:
   - curl https://cdn.shiftleft.io/download/sl > sl && sudo mv sl /usr/local/bin/  && sudo chmod a+rx /usr/local/bin/sl
@@ -32,7 +35,7 @@ jobs:
   include:
     - stage: Build
       script:
-        - make build
+        - make build MAJOR_VERSION=$MAJORVER MINOR_VERSION=$MINORVER PATCH_VERSION=$PATCHVER
 
     - stage: Test
       name: Code Quality Tests

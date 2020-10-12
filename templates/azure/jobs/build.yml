@@ -2,6 +2,9 @@ parameters:
   name: ''
   pool: ''
   appName: ''
+  majorVer: ''
+  minorVer: ''
+  parchVer: ''
 
 jobs:
   - job: ${{ parameters.name }}
@@ -12,3 +15,6 @@ jobs:
       - template: ../steps/buildapp.yml
         parameters:
           appName: ${{ parameters.appName }}
+          majorVer: ${{ parameters.majorVer }}
+          minorVer: ${{ parameters.minorVer }}
+          patchVer: ${{ parameters.patchVer }}

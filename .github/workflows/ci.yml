@@ -29,6 +29,8 @@ on:
 
 env:
   major_version: 0
+  minor_version: 5
+  patch_version: 3
   appname: 'mylabs-go'
 
 defaults:
@@ -54,15 +56,27 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Create bin dir
         run: mkdir -p bin
+
+      - name: Generate Version
+        id: semver
+        uses: paulhatch/semantic-version@v3
+
+      - name: Output Sem Version
+        run: |
+          echo "Major : ${{ steps.semver.outputs.major }}"
+          echo "Minor : ${{ steps.semver.outputs.minor }}"
+          echo "Patch : ${{ steps.semver.outputs.patch }}"
 
       - name: Build
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build GIT_BRANCH_NAME=$GITBRANCH
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH MAJOR_VERSION=${{ env.major_version }} MINOR_VERSION=${{ env.minor_version }} PATCH_VERSION=${{ env.patch_version }}
 
       - uses: actions/upload-artifact@v1
         with:
@@ -99,7 +113,7 @@ jobs:
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build GIT_BRANCH_NAME=$GITBRANCH
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH MAJOR_VERSION=${{ env.major_version }} MINOR_VERSION=${{ env.minor_version }} PATCH_VERSION=${{ env.patch_version }}
 
       - name: Run Vulnerability Checks
         run: |
@@ -140,7 +154,7 @@ jobs:
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build GIT_BRANCH_NAME=$GITBRANCH
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH MAJOR_VERSION=${{ env.major_version }} MINOR_VERSION=${{ env.minor_version }} PATCH_VERSION=${{ env.patch_version }}
 
       - name: Set Release Name
         id: set-release-name
@@ -203,7 +217,7 @@ jobs:
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build GIT_BRANCH_NAME=$GITBRANCH
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH MAJOR_VERSION=${{ env.major_version }} MINOR_VERSION=${{ env.minor_version }} PATCH_VERSION=${{ env.patch_version }}
 
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch
