@@ -47,9 +47,8 @@ init:
 build: init
 	@echo "Building ..."
 	@echo $(app_name)
-	@go build -ldflags "-X 'main.MajorVersion=$(MAJOR_VERSION)' -X 'main.MinorVersion=$(MINOR_VERSION)' \
-		-X 'main.PatchVersion=$(PATCH_VERSION)' -X 'main.VersionSuffix=$(vsuffix)' -X 'main.VCSBranch=$(git_branch)' \
-		-X 'main.BuildTime=$(build_time)' -X 'main.VCSCommitID=$(git_commit_id)' \
+	@go build -ldflags "-X 'main.AppVersion=$(APP_VERSION)' -X 'main.VersionSuffix=$(vsuffix)' \
+		-X 'main.VCSBranch=$(git_branch)' -X 'main.BuildTime=$(build_time)' -X 'main.VCSCommitID=$(git_commit_id)' \
 		-X 'main.BuiltBy=$(built_by)' -X 'main.BuildHost=$(build_host)' -X 'main.GOVersion=$(go_version)'" \
 		-o $(BIN_DIR)/$(app_file_name)
 	@echo "Binary $(app_file_name) saved in $(BIN_DIR)"
