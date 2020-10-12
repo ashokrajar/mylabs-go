@@ -39,7 +39,7 @@ var GOVersion string
 // Version will return version string
 func Version() string {
 	if VersionSuffix == "" {
-		return fmt.Sprintf("%s", AppVersion)
+		return AppVersion
 	}
 
 	return fmt.Sprintf("%s-%s", AppVersion, VersionSuffix)
