@@ -39,12 +39,14 @@ variables:
   APPNAME: mylabs-go
   major: 0
   minor: 5
-  PATCHVER: $(Rev:.r)
+  patch: 3
+  brpatch: $[counter(variables['build.sourcebranchname'], 0)]
   GOPATH: '$(Pipeline.Workspace)/gowork'
 
-name: $(major).$(minor)$(Rev:.r)
+name: $(major).$(minor).$(patch)-$(Build.SourceBranchName).$(brpatch)
 
 stages:
+
   - stage: Build
     jobs:
       - template: templates/azure/jobs/build.yml
@@ -53,8 +55,8 @@ stages:
           name: 'Linux_Build'
           pool:
             vmImage: 'ubuntu-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/build.yml
@@ -63,8 +65,8 @@ stages:
           name: 'Mac_Build'
           pool:
             vmImage: 'macos-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/build.yml
@@ -73,8 +75,8 @@ stages:
           name: 'Windows_Build'
           pool:
             vmImage: 'windows-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)
 
   - stage: Test
@@ -90,8 +92,8 @@ stages:
           name: 'Linux_Release'
           pool:
             vmImage: 'ubuntu-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/release.yml
@@ -100,8 +102,8 @@ stages:
           name: 'Mac_Release'
           pool:
             vmImage: 'macos-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)
 
       - template: templates/azure/jobs/release.yml
@@ -110,6 +112,6 @@ stages:
           name: 'Windows_Release'
           pool:
             vmImage: 'windows-latest'
-          majorVer: $(MAJORVER)
-          minorVer: $(MINORVER)
+          majorVer: $(major)
+          minorVer: $(minor)
           patchVer: $(PATCHVER)

@@ -71,6 +71,10 @@ jobs:
           echo "Major : ${{ steps.semver.outputs.major }}"
           echo "Minor : ${{ steps.semver.outputs.minor }}"
           echo "Patch : ${{ steps.semver.outputs.patch }}"
+          echo "Patch : ${{ steps.semver.outputs.increment }}"
+          echo "Patch : ${{ steps.semver.outputs.version }}"
+          echo "Patch : ${{ steps.semver.outputs.version_tag }}"
+          echo "Patch : ${{ steps.semver.outputs.changed }}"
 
       - name: Build
         run: |
