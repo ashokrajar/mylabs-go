@@ -10,7 +10,7 @@ steps:
       targetType: 'inline'
       script: |
         set -e -x
-        GITBRANCH=`echo "$(Build.SourceBranchName)" | cut -f1 -d'/'`
+        GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///" | cut -f1 -d'/'`
         make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ parameters.appVer }} BR_PATCH_VERSION=${{ parameters.brPatchVer }}
 
   - task: CopyFiles@2
