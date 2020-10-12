@@ -58,7 +58,7 @@ stages:
               script: |
                 set -e -x
                 GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///" | cut -f1 -d'/'`
-                echo "##vso[build.updatebuildnumber]$(major).$(minor).$(patch)-$GITBRANCH.$(brpatch)"
+                echo "##vso[build.updatebuildnumber]$(appversion)-$GITBRANCH.$(brpatch) "
 
   - stage: Build
     displayName: Build (Multi-Platform)
