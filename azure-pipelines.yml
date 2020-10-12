@@ -37,28 +37,9 @@ pr:
 
 variables:
   APPNAME: mylabs-go
-  major: 0
-  minor: 5
-  patch: 3
-  brpatch: $[counter(variables['build.sourcebranchname'], 0)]
-  appversion: $(major).$(minor).$(patch)
   GOPATH: '$(Pipeline.Workspace)/gowork'
 
 stages:
-
-  - stage: set_build_num
-    displayName: Set Build Number
-    jobs:
-      - job: set_build_number
-        steps:
-          - task: Bash@3
-            displayName: 'Set Build Number'
-            inputs:
-              targetType: 'inline'
-              script: |
-                set -e -x
-                GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///" | cut -f1 -d'/'`
-                echo "##vso[build.updatebuildnumber]$(appversion)-$GITBRANCH.$(brpatch) "
 
   - stage: Build
     displayName: Build (Multi-Platform)
@@ -66,12 +47,12 @@ stages:
       - template: templates/azure/jobs/build.yml
         parameters:
           appName: $(APPNAME)
-          appVer: $(appversion)
-          brPatchVer: $(brpatch)
 
   - stage: Test
     jobs:
       - template: templates/azure/jobs/test.yml
+        parameters:
+          appName: $(APPNAME)
 
   - stage: Release
     displayName: Release (Multi-Platform)
@@ -81,5 +62,3 @@ stages:
         parameters:
           parameters:
           appName: $(APPNAME)
-          appVer: $(appversion)
-          brPatchVer: $(brpatch)

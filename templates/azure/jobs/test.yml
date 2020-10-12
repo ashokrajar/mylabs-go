@@ -1,3 +1,6 @@
+parameters:
+  appName: ''
+
 jobs:
   - job: RunTests
     strategy:
@@ -18,6 +21,8 @@ jobs:
           goVersion: '$(go.version)'
 
       - template: ../steps/buildapp.yml
+        parameters:
+          appName: ${{ parameters.appName }}
 
       - script: |
           set -e -x

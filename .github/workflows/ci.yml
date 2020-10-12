@@ -28,9 +28,6 @@ on:
       - templates/azure/*
 
 env:
-  major_version: 0
-  minor_version: 5
-  patch_version: 3
   appname: 'mylabs-go'
 
 defaults:
@@ -62,15 +59,20 @@ jobs:
       - name: Create bin dir
         run: mkdir -p bin
 
-      - name: Generate Version
-        id: semver
-        uses: paulhatch/semantic-version@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.4
+        with:
+          versionSpec: '5.3.x'
+
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.4
 
       - name: Build
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ steps.semver.outputs.version }} BR_PATCH_VERSION=${{ steps.semver.outputs.increment }}
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=${{ steps.gitversion.outputs.branchName }} APP_VERSION=${{ steps.gitversion.outputs.semVer }}
 
       - uses: actions/upload-artifact@v1
         with:
@@ -99,19 +101,26 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Create bin dir
         run: mkdir -p bin
 
-      - name: Generate Version
-        id: semver
-        uses: paulhatch/semantic-version@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.4
+        with:
+          versionSpec: '5.3.x'
+
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.4
 
       - name: Build
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ steps.semver.outputs.version }} BR_PATCH_VERSION=${{ steps.semver.outputs.increment }}
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=${{ steps.gitversion.outputs.branchName }} APP_VERSION=${{ steps.gitversion.outputs.semVer }}
 
       - name: Run Vulnerability Checks
         run: |
@@ -147,16 +156,23 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: Generate Version
-        id: semver
-        uses: paulhatch/semantic-version@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.4
+        with:
+          versionSpec: '5.3.x'
+
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.4
 
       - name: Build
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ steps.semver.outputs.version }} BR_PATCH_VERSION=${{ steps.semver.outputs.increment }}
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=${{ steps.gitversion.outputs.branchName }} APP_VERSION=${{ steps.gitversion.outputs.semVer }}
 
       - name: Set Release Name
         id: set-release-name
@@ -214,16 +230,23 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: Generate Version
-        id: semver
-        uses: paulhatch/semantic-version@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.4
+        with:
+          versionSpec: '5.3.x'
+
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.4
 
       - name: Build
         run: |
           set -e -x
           GITBRANCH=`git rev-parse --abbrev-ref HEAD | cut -f1 -d'/'`
-          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=$GITBRANCH APP_VERSION=${{ steps.semver.outputs.version }} BR_PATCH_VERSION=${{ steps.semver.outputs.increment }}
+          make build APP_NAME=${{ env.appname }} GIT_BRANCH_NAME=${{ steps.gitversion.outputs.branchName }} APP_VERSION=${{ steps.gitversion.outputs.semVer }}
 
       - name: Get/Set OS, Arch & App File Name
         id: get-os-arch

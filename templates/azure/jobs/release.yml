@@ -1,7 +1,5 @@
 parameters:
   appName: ''
-  appVer: ''
-  brPatchVer: ''
 
 jobs:
   - job:
@@ -23,8 +21,6 @@ jobs:
       - template: ../steps/buildapp.yml
         parameters:
           appName: ${{ parameters.appName }}
-          appVer: ${{ parameters.appVer }}
-          brPatchVer: ${{ parameters.brPatchVer }}
 
       - task: Bash@3
         displayName: 'Get/Set Application/Package Version'

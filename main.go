@@ -27,7 +27,6 @@ import (
 )
 
 var AppVersion string
-var VersionSuffix string
 
 var VCSBranch string
 var VCSCommitID string
@@ -38,11 +37,7 @@ var GOVersion string
 
 // Version will return version string
 func Version() string {
-	if VersionSuffix == "" {
-		return AppVersion
-	}
-
-	return fmt.Sprintf("%s-%s", AppVersion, VersionSuffix)
+	return AppVersion
 }
 
 // HelloHome will return hello home string
