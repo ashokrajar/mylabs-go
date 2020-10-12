@@ -2,9 +2,8 @@ APP_NAME=$(notdir $(shell pwd))
 
 BIN_DIR=bin
 
-MAJOR_VERSION=0
-MINOR_VERSION=0
-PATCH_VERSION=0
+APP_VERSION=0.0.0
+BR_PATCH_VERSION=0
 
 BUILD_METADATA=$(shell git rev-parse --short HEAD)
 
@@ -22,17 +21,17 @@ go_arch := $(shell go env GOARCH)
 ifeq ($(GIT_BRANCH_NAME), master)
 	vsuffix=
 else ifeq ($(GIT_BRANCH_NAME), hostfix)
-	vsuffix=hf.$(BUILD_METADATA)
+	vsuffix=hf.$(BR_PATCH_VERSION).$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), bugfix)
-	vsuffix=bug+$(BUILD_METADATA)
+	vsuffix=bug.$(BR_PATCH_VERSION)+$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), release)
-	vsuffix=rc.$(BUILD_METADATA)
+	vsuffix=rc.$(BR_PATCH_VERSION).$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), develop)
-	vsuffix=next+$(BUILD_METADATA)
+	vsuffix=next.$(BR_PATCH_VERSION)+$(BUILD_METADATA)
 else ifeq ($(GIT_BRANCH_NAME), feature)
-	vsuffix=feat+$(BUILD_METADATA)
+	vsuffix=feat.$(BR_PATCH_VERSION)+$(BUILD_METADATA)
 else
-	vsuffix=edge+$(BUILD_METADATA)
+	vsuffix=edge.$(BR_PATCH_VERSION)+$(BUILD_METADATA)
 endif
 
 

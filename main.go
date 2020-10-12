@@ -26,10 +26,7 @@ import (
 	"os"
 )
 
-var MajorVersion string
-var MinorVersion string
-var PatchVersion string
-
+var AppVersion string
 var VersionSuffix string
 
 var VCSBranch string
@@ -42,10 +39,10 @@ var GOVersion string
 // Version will return version string
 func Version() string {
 	if VersionSuffix == "" {
-		return fmt.Sprintf("%s.%s.%s", MajorVersion, MinorVersion, PatchVersion)
+		return fmt.Sprintf("%s", AppVersion)
 	}
 
-	return fmt.Sprintf("%s.%s.%s-%s", MajorVersion, MinorVersion, PatchVersion, VersionSuffix)
+	return fmt.Sprintf("%s-%s", AppVersion, VersionSuffix)
 }
 
 // HelloHome will return hello home string

@@ -41,77 +41,45 @@ variables:
   minor: 5
   patch: 3
   brpatch: $[counter(variables['build.sourcebranchname'], 0)]
+  appversion: $(major).$(minor).$(patch)
   GOPATH: '$(Pipeline.Workspace)/gowork'
-
-name: $(major).$(minor).$(patch)-$(Build.SourceBranchName).$(brpatch)
 
 stages:
 
+  - stage: set_build_num
+    displayName: Set Build Number
+    jobs:
+      - job: set_build_number
+        steps:
+          - task: Bash@3
+            displayName: 'Set Build Number'
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -e -x
+                GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
+                echo "##vso[build.updatebuildnumber]$(major).$(minor).$(patch)-$GITBRANCH.$(brpatch)"
+
   - stage: Build
+    displayName: Build (Multi-Platform)
     jobs:
       - template: templates/azure/jobs/build.yml
         parameters:
           appName: $(APPNAME)
-          name: 'Linux_Build'
-          pool:
-            vmImage: 'ubuntu-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
-
-      - template: templates/azure/jobs/build.yml
-        parameters:
-          appName: $(APPNAME)
-          name: 'Mac_Build'
-          pool:
-            vmImage: 'macos-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
-
-      - template: templates/azure/jobs/build.yml
-        parameters:
-          appName: $(APPNAME)
-          name: 'Windows_Build'
-          pool:
-            vmImage: 'windows-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
+          appVer: $(appversion)
+          brPatchVer: $(brpatch)
 
   - stage: Test
     jobs:
       - template: templates/azure/jobs/test.yml
 
   - stage: Release
+    displayName: Release (Multi-Platform)
     condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hostfix'))
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:
+          parameters:
           appName: $(APPNAME)
-          name: 'Linux_Release'
-          pool:
-            vmImage: 'ubuntu-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
-
-      - template: templates/azure/jobs/release.yml
-        parameters:
-          appName: $(APPNAME)
-          name: 'Mac_Release'
-          pool:
-            vmImage: 'macos-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
-
-      - template: templates/azure/jobs/release.yml
-        parameters:
-          appName: $(APPNAME)
-          name: 'Windows_Release'
-          pool:
-            vmImage: 'windows-latest'
-          majorVer: $(major)
-          minorVer: $(minor)
-          patchVer: $(PATCHVER)
+          appVer: $(appversion)
+          brPatchVer: $(brpatch)

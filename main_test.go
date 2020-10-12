@@ -46,25 +46,19 @@ func Test_helloHome(t *testing.T) {
 
 func TestVersion(t *testing.T) {
 	tests := []struct {
-		name     string
-		majorVer string
-		minorVer string
-		patchVer string
-		want     string
+		name   string
+		appVer string
+		want   string
 	}{
 		{
-			name:     "Show Version",
-			majorVer: "0",
-			minorVer: "3",
-			patchVer: "4",
-			want:     "0.3.4",
+			name:   "Show Version",
+			appVer: "0.3.4",
+			want:   "0.3.4",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			MajorVersion = tt.majorVer
-			MinorVersion = tt.minorVer
-			PatchVersion = tt.patchVer
+			AppVersion = tt.appVer
 			if got := Version(); got != tt.want {
 				t.Errorf("Version() = %v, want %v", got, tt.want)
 			}

@@ -1,23 +1,30 @@
 parameters:
-  name: ''
-  pool: ''
   appName: ''
-  majorVer: ''
-  minorVer: ''
-  parchVer: ''
+  appVer: ''
+  brPatchVer: ''
 
 jobs:
-  - job: ${{ parameters.name }}
-    pool: ${{ parameters.pool }}
+  - job:
+    strategy:
+      matrix:
+        linux:
+          vmImage: 'ubuntu-latest'
+        mac:
+          vmImage: 'macos-latest'
+        windows:
+          vmImage: 'windows-latest'
+
+    pool:
+      vmImage: $(vmImage)
+
     steps:
       - template: ../steps/setupgo.yml
 
       - template: ../steps/buildapp.yml
         parameters:
           appName: ${{ parameters.appName }}
-          majorVer: ${{ parameters.majorVer }}
-          minorVer: ${{ parameters.minorVer }}
-          patchVer: ${{ parameters.patchVer }}
+          appVer: ${{ parameters.appVer }}
+          brPatchVer: ${{ parameters.brPatchVer }}
 
       - task: CopyFiles@2
         displayName: 'Copy binary files to Artifact Stage Directory'
