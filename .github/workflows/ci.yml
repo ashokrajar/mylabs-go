@@ -10,22 +10,22 @@ on:
       - 'hotfix/**'
       - 'bugfix/**'
     paths-ignore:
-      - README.md
+      - 'README.md'
       - LICENSE
-      - .travis.yml
-      - .azure-pipeline.yml
-      - templates/azure/*
+      - '.travis.yml'
+      - '.azure-pipeline.yml'
+      - 'templates/azure/*'
 
   pull_request:
     branches:
       - master
       - develop
     paths-ignore:
-      - README.md
+      - 'README.md'
       - LICENSE
-      - .travis.yml
-      - .azure-pipeline.yml
-      - templates/azure/*
+      - '.travis.yml'
+      - '.azure-pipeline.yml'
+      - 'templates/azure/*'
 
 env:
   appname: 'mylabs-go'
