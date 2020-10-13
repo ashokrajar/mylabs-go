@@ -4,10 +4,10 @@ branches:
   only:
     - master
     - develop
-    - feature/*
-    - release/*
-    - hotfix/*
-    - bugfix/*
+    - /^feature.*$/
+    - /^release.*$/
+    - /^hostfix.*$/
+    - /^bugfix.*$/
 
 os:
   - linux
