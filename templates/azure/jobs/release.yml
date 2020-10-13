@@ -1,25 +1,26 @@
 parameters:
-  name: ''
-  pool: ''
+  appName: ''
 
 jobs:
-  - job: ${{ parameters.name }}
-    pool: ${{ parameters.pool }}
+  - job:
+    strategy:
+      matrix:
+        linux:
+          vmImage: 'ubuntu-latest'
+        mac:
+          vmImage: 'macos-latest'
+        windows:
+          vmImage: 'windows-latest'
+
+    pool:
+      vmImage: $(vmImage)
+
     steps:
       - template: ../steps/setupgo.yml
 
       - template: ../steps/buildapp.yml
-
-      - task: CopyFiles@2
-        displayName: 'Copy binary files to Artifact Stage Directory'
-        inputs:
-          contents: 'bin/**'
-          targetFolder: $(Build.ArtifactStagingDirectory)
-
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Build Artifacts'
-        inputs:
-          artifactName: $(Agent.OS)
+        parameters:
+          appName: ${{ parameters.appName }}
 
       - task: Bash@3
         displayName: 'Get/Set Application/Package Version'
@@ -30,9 +31,9 @@ jobs:
             OS=`go env GOOS`
             ARCH=`go env GOARCH`
             if [ $(Agent.OS) == 'Windows_NT' ]; then
-              version=`./bin/mylabs-go_$OS\_$ARCH.exe version`
+              version=`./bin/${{ parameters.appName }}_$OS\_$ARCH.exe version | tr + -`
             else
-              version=`./bin/mylabs-go_$OS\_$ARCH version`
+              version=`./bin/${{ parameters.appName }}_$OS\_$ARCH version | tr + -`
             fi
             echo "##vso[task.setvariable variable=MYLABSCLI_VERSION;]$version"
 

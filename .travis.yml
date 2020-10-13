@@ -3,11 +3,11 @@ language: go
 branches:
   only:
     - master
-    - dev
+    - develop
     - feature/*
     - release/*
     - hotfix/*
-    - hotfix/*
+    - bugfix/*
 
 os:
   - linux
@@ -17,12 +17,16 @@ go:
   - "1.14"
 
 env:
+  - APP_NAME=mylabs-go
   - GO111MODULE=on
 
 install:
   - curl https://cdn.shiftleft.io/download/sl > sl && sudo mv sl /usr/local/bin/  && sudo chmod a+rx /usr/local/bin/sl
-  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin v1.31.0
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin latest
   - sl auth --org $SHIFTLEFT_ORG_ID --token $SHIFTLEFT_ACCESS_TOKEN --no-diagnostic
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update ; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install gitversion ; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then curl -sSfL https://github.com/GitTools/GitVersion/releases/download/5.3.7/gitversion-ubuntu.16.04-x64-5.3.7.tar.gz | tar zxf - && sudo mv gitversion /usr/local/bin/ && sudo chmod a+x /usr/local/bin/gitversion ; fi
 
 stages:
   - Build
@@ -32,7 +36,7 @@ jobs:
   include:
     - stage: Build
       script:
-        - make build
+        - make build APP_NAME=$APP_NAME GIT_BRANCH_NAME=$(gitversion /showvariable SemBranchName) APP_VERSION=$(gitversion /showvariable SemVer)
 
     - stage: Test
       name: Code Quality Tests

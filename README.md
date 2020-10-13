@@ -13,6 +13,7 @@ GoLang CI/CD experimental code repo
 This repo is a lab rat for my code experiments for full E2E(End to End) CI/CD integrations.
 Which covers these,
 
+* Automatic Semantic Versioning (Using [GitVersion](https://github.com/GitTools/GitVersion)) 
 * Code Quality Gates
 * Unit Tests
 * Vulnerability tests (Using [ShiftLeft](https://www.shiftleft.io))
@@ -30,7 +31,7 @@ Which covers these,
 * GitHub Release
 * Travis CI
 
-#### Road Map
+## Road Map
 * AWS Code Commit/Build
 * Automated Deployments
   * AWS
