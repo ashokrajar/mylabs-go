@@ -198,8 +198,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.set-release-name.outputs.RELEASE_NAME }}
-          release_name: v${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          tag_name: ${{ steps.set-release-name.outputs.RELEASE_NAME }}
+          release_name: Release v${{ steps.set-release-name.outputs.RELEASE_NAME }}
           draft: false
           prerelease: ${{ steps.set-release-name.outputs.PRERELEASE }}
 
