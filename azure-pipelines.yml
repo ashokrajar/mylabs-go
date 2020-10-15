@@ -8,10 +8,11 @@ trigger:
   branches:
     include:
       - master
-      - dev
+      - develop
       - release/*
       - feature/*
       - hotfix/*
+      - bugfix/*
   paths:
     exclude:
       - README.md
@@ -25,6 +26,7 @@ pr:
   branches:
     include:
       - master
+      - develop
   paths:
     exclude:
       - README.md
@@ -34,53 +36,29 @@ pr:
       - .gitignore
 
 variables:
+  APPNAME: mylabs-go
   GOPATH: '$(Pipeline.Workspace)/gowork'
 
 stages:
+
   - stage: Build
+    displayName: Build (Multi-Platform)
     jobs:
       - template: templates/azure/jobs/build.yml
         parameters:
-          name: 'Linux_Build'
-          pool:
-            vmImage: 'ubuntu-18.04'
-          os: 'linux'
-
-      - template: templates/azure/jobs/build.yml
-        parameters:
-          name: 'Mac_Build'
-          pool:
-            vmImage: 'macos-10.14'
-          os: 'darwin'
-
-      - template: templates/azure/jobs/build.yml
-        parameters:
-          name: 'Windows_Build'
-          pool:
-            vmImage: 'windows-2019'
+          appName: $(APPNAME)
 
   - stage: Test
     jobs:
       - template: templates/azure/jobs/test.yml
+        parameters:
+          appName: $(APPNAME)
 
   - stage: Release
+    displayName: Release (Multi-Platform)
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))
     jobs:
       - template: templates/azure/jobs/release.yml
         parameters:
-          name: 'Linux_Release'
-          pool:
-            vmImage: 'ubuntu-18.04'
-          os: 'linux'
-
-      - template: templates/azure/jobs/release.yml
-        parameters:
-          name: 'Mac_Release'
-          pool:
-            vmImage: 'macos-10.14'
-          os: 'darwin'
-
-      - template: templates/azure/jobs/release.yml
-        parameters:
-          name: 'Windows_Release'
-          pool:
-            vmImage: 'windows-2019'
+          parameters:
+          appName: $(APPNAME)

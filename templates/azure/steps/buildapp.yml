@@ -1,9 +1,32 @@
+parameters:
+  appName: ''
+
 steps:
+  - task: gitversion/setup@0
+    displayName: Install GitVersion
+    inputs:
+      versionSpec: '5.1.3'
+
+  - task: gitversion/execute@0
+    displayName: Use GitVersion
+
+  - task: Bash@3
+    displayName: 'Set Build Number'
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "##vso[build.updatebuildnumber]$(semVer)"
+
   - task: Bash@3
     displayName: 'Build Application Binary'
     inputs:
       targetType: 'inline'
       script: |
         set -e -x
-        GITBRANCH=`echo "$(Build.SourceBranch)" | sed "s/refs\/heads\///"`
-        make build GIT_BRANCH_NAME=$GITBRANCH
+        make build APP_NAME=${{ parameters.appName }} GIT_BRANCH_NAME=$(branchName) APP_VERSION=$(semVer)
+
+  - task: CopyFiles@2
+    displayName: 'Copy binary files to Artifact Stage Directory'
+    inputs:
+      contents: 'bin/**'
+      targetFolder: $(Build.ArtifactStagingDirectory)

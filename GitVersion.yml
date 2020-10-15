@@ -1,0 +1,18 @@
+mode: ContinuousDelivery
+increment: Patch
+assembly-versioning-scheme: MajorMinorPatch
+branches:
+  release:
+    tag: rc
+  feature:
+    tag: feat
+    increment: Inherit
+  pull-request:
+    tag: pr
+    increment: Inherit
+  hotfix:
+    tag: hf
+  support:
+    tag: sup
+  develop:
+    tag: next
