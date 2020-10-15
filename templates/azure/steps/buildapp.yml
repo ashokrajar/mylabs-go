@@ -15,7 +15,6 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        set -e -x
         echo "##vso[build.updatebuildnumber]$(semVer)"
 
   - task: Bash@3
