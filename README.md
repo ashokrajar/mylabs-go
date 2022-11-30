@@ -20,6 +20,8 @@ Which covers these,
 * Build Binary (Linux, MacOS, Windows)
 * Release [Azure & GitHub]
 
+
+
 ### Covered Samples & Examples
 * Azure Pipelines
   * Multi branch trigger
